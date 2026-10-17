@@ -1,0 +1,20 @@
+:host {
+  display: inline-flex;
+}
+
+// Only the outer corners are rounded; inner borders are shared.
+:host ::ng-deep > button {
+  border-radius: 0;
+}
+
+:host ::ng-deep > button:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+:host ::ng-deep > button:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+:host ::ng-deep > button:not(:first-child) {
+  border-left: 0;
+}

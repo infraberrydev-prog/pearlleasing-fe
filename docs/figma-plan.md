@@ -353,6 +353,25 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 **Steps 3–4 re-checked against Figma (2026-10-17)**, once access returned. Fixed: input placeholders and their color, the countdown style, mobile auth layout and code boxes, the shield tile on mobile, sidebar/bottom-nav/More styling, the backdrops, the logout dialog's copy and danger style, and the stacked dialog on tablet/mobile. Icons were replaced with the exact Figma exports; navigation icons are tinted by state.
 - Still open: the Figma Expenses nav icon differs between the rail and bottom nav (`bank-note-01`) and the expanded panel (`file-lock-02`); `bank-note-01` is used everywhere. The 2FA action spacing is 24px in two frames and 16px in one; 24px is used. Filled mobile code digits aren't drawn, so 28px is used. Tablet sort/filter is still undesigned.
 
+**Step 5 done (2026-10-17).** Shared report-list building blocks in `shared/ui`, built from Figma 435:11353 (list card), 281:10591 (empty state), 568:10951 / 385:11240 (filter panel and sheet), 641:37260 (action menu) and 385:20536 (date picker sheet).
+- `data-table`: columns plus `ng-template appCell` cells, optional row selection with select-all (indeterminate), 52/68px rows, Nunito text, horizontal scroll on narrow screens.
+- `pagination`: Previous / 1 2 3 … 8 9 10 / Next; on mobile it shows "Page x of y".
+- `filter-button` and `filter-button-group`: the joined Sort | Filter toolbar buttons. Search reuses `input-field` with the `search-01` icon.
+- `empty-state`: illustration, title, optional text and projected actions ("No available reports yet.").
+- `menu` / `menu-item`: the View/Delete action menu on CDK Menu (keyboard support built in).
+- `option-list`: single-choice rows with the radio on the right, used for sort.
+- `dropdown-panel` (anchored, desktop/tablet) and `BottomSheet` (mobile, docked 8px from the edges), plus `panel-section` and `panel-actions` (Clear | Apply side by side, stacked with Apply on top on mobile).
+- `date-range-calendar`: month navigation, start–end fields, Monday-first grid, range band, today dot, arrow-key navigation; a form control holding `{ start, end }`.
+- `size="sm"` buttons now use 8px corners (confirmed by pagination and panel footers).
+- New icons and the empty-state illustration are in `public/icons` and `public/images/empty-reports.svg`. The `/dev/ui` gallery shows everything assembled like the Figma list.
+
+**Step 5 gaps:**
+- The sort menu's own design context wasn't fetched (call limit). It reuses the action-menu container and item styles, with hover in `colors/bg/hovered`; the selected radio is still the inferred style.
+- The "No Search Found" state (284:11262) wasn't fetched: its illustration and copy are unknown. `empty-state` takes any illustration and title.
+- Figma's weekday header says "Sat"; "Sa" is used to match the other two-letter labels.
+- Disabled Previous/Next and the mobile pagination layout aren't drawn in Figma.
+- Tablet/mobile report cards, the filter form fields and wiring the toolbar to data belong to step 6.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

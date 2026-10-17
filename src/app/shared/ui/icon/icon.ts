@@ -14,10 +14,17 @@ import {
  */
 export type IconName =
   | 'arrow-left-sm'
+  | 'calendar-01'
+  | 'chevron-down'
+  | 'chevron-left'
+  | 'chevron-right'
   | 'close-inverse'
+  | 'download-01'
   | 'email'
   | 'eye-closed'
   | 'eye-open'
+  | 'eye-open-subtle'
+  | 'filter'
   | 'information-circle-contained-danger'
   | 'information-circle-contained-warning'
   | 'layout-left'
@@ -26,7 +33,12 @@ export type IconName =
   | 'nav-expenses-reports'
   | 'nav-leasing-reports'
   | 'nav-more'
+  | 'plus-02-inverse'
+  | 'search-01'
   | 'shield-check'
+  | 'sort-updown-arrow'
+  | 'trash-03'
+  | 'trash-04'
   | 'x-03';
 
 /**

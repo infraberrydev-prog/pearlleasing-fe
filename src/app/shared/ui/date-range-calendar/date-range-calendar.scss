@@ -1,0 +1,152 @@
+@use 'typography' as type;
+@use 'mixins';
+
+// Figma "Calendar" (385:20542): 16px padding, 12px between month, fields and grid.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+}
+
+.month {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.month-label {
+  @include type.text(md, semibold);
+  margin: 0;
+  color: var(--color-text-default);
+}
+
+.nav {
+  @include mixins.reset-button;
+  display: inline-flex;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+// Start – end display fields: 8px 12px padding, input border, 8px radius.
+.fields {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.field {
+  @include type.text(md);
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-default);
+  white-space: nowrap;
+
+  &.is-empty {
+    color: var(--color-text-disabled);
+  }
+}
+
+.dash {
+  flex-shrink: 0;
+  width: 8px;
+  height: 1px;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.row {
+  display: flex;
+}
+
+// "_Calendar cell": 40px tall, 8px radius, Text sm/Medium.
+.cell {
+  @include type.text(sm, medium);
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-default);
+}
+
+.day {
+  @include mixins.reset-button;
+
+  &:hover:not(:disabled):not(.is-start):not(.is-end) {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+    outline-offset: -2px;
+    z-index: 1;
+  }
+
+  // Days of the previous/next month ("Past date" variant).
+  &.outside {
+    color: var(--color-text-subtler);
+  }
+
+  &:disabled {
+    color: var(--color-text-disabled);
+    cursor: default;
+  }
+
+  // Range band: square in the middle, rounded where the band meets a row edge.
+  &.in-range {
+    background: var(--color-bg-primary);
+    border-radius: 0;
+
+    &.row-start {
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    }
+
+    &.row-end {
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+  }
+
+  &.is-start,
+  &.is-end {
+    background: var(--color-brand);
+    color: var(--color-text-inverse);
+  }
+
+  // Today: 6px brand dot under the number.
+  &.is-today::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 13px);
+    width: 6px;
+    height: 6px;
+    background: url('/icons/today-dot.svg') center / contain no-repeat;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.visually-hidden {
+  @include mixins.visually-hidden;
+}

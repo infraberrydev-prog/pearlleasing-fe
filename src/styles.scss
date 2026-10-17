@@ -45,6 +45,24 @@ img {
   }
 }
 
+// Dropdown panel / bottom sheet surface (Figma 568:10952, 570:13271).
+.app-panel {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-sm) 0;
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  overflow: clip;
+}
+
+// Bottom sheet scrolls inside when taller than the screen.
+.app-bottom-sheet {
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+}
+
 // Modal scrim used by the shared dialog service.
 .app-dialog-backdrop {
   background: var(--color-backdrop);

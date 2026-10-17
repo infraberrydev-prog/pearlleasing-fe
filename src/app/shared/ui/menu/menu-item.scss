@@ -1,0 +1,22 @@
+@use 'typography' as type;
+@use 'mixins';
+
+:host {
+  @include mixins.reset-button;
+  @include type.text(md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  width: 100%;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--color-bg-default);
+  color: var(--color-text-default);
+  text-align: left;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-bg-hovered);
+    outline: none;
+  }
+}

@@ -1,7 +1,7 @@
 @use 'typography' as type;
 
 .gallery {
-  max-width: 960px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 32px 16px 96px;
 }
@@ -50,6 +50,71 @@ section {
   @include type.text(sm, medium);
   color: var(--color-text-link);
   text-decoration: none;
+}
+
+// Step 5 demo: Figma list card (435:11353).
+.list-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+  padding: var(--spacing-3xl);
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+
+  &.empty {
+    min-height: 420px;
+    justify-content: center;
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.toolbar-start,
+.toolbar-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.search {
+  width: 370px;
+  max-width: 100%;
+}
+
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.report-id {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand);
+  text-decoration: none;
+}
+
+.row-actions {
+  display: inline-flex;
+  gap: var(--spacing-3xl);
+}
+
+.icon-btn {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.calendar-box {
+  max-width: 374px;
 }
 
 em {

@@ -1,0 +1,68 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+@use 'mixins';
+
+// Figma 93:3393: top border, 16px 24px padding, Previous / numbers / Next.
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  border-top: 1px solid var(--color-border-default);
+
+  @include bp.mobile {
+    padding: var(--spacing-xl) 0;
+  }
+}
+
+.pages {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include bp.mobile {
+    display: none;
+  }
+}
+
+// "_Pagination number base": 40×40, 8px radius, Text md/Medium.
+.page {
+  @include mixins.reset-button;
+  @include type.text(md, medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-subtler);
+
+  &:hover:not(.gap),
+  &.is-current {
+    background: var(--color-bg-hovered);
+    color: var(--color-text-subtle);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.gap {
+  cursor: default;
+}
+
+// Phones have no room for the number row (not drawn in Figma).
+.compact {
+  @include type.text(sm, medium);
+  display: none;
+  color: var(--color-text-subtler);
+  white-space: nowrap;
+
+  @include bp.mobile {
+    display: block;
+  }
+}

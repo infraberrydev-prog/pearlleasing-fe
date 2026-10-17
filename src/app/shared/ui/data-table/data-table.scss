@@ -1,0 +1,78 @@
+@use 'mixins';
+
+:host {
+  display: block;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.scroller {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-family-numeric);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+  color: var(--color-neutral-gray-900);
+}
+
+th,
+td {
+  padding: var(--spacing-xl);
+  background: var(--color-bg-default);
+  border-bottom: 1px solid var(--color-border-default);
+  text-align: left;
+  vertical-align: middle;
+}
+
+// Header cell: 52px, Text sm/Bold.
+th {
+  height: 52px;
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+}
+
+// Body cell: 68px, Text sm/SemiBold, long text ellipsised.
+td {
+  height: 68px;
+  max-width: 0;
+  overflow: hidden;
+  font-weight: var(--font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover td,
+tr.is-selected td {
+  background: var(--color-bg-hovered);
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-end {
+  text-align: right;
+}
+
+// Checkbox column: 59px wide, 8px side padding.
+.select {
+  width: 59px;
+  max-width: none;
+  padding: var(--spacing-xl) var(--spacing-md);
+  text-align: center;
+}
+
+.visually-hidden {
+  @include mixins.visually-hidden;
+}

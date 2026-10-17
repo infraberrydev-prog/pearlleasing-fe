@@ -1,0 +1,113 @@
+<section>
+  <h2>Report list blocks (step 5)</h2>
+
+  <div class="list-card">
+    <div class="toolbar">
+      <div class="toolbar-start">
+        <app-input-field class="search" type="search" leadingIcon="search-01" placeholder="Search Report name" />
+        <app-filter-button-group>
+          <button #sortBtn app-filter-button [attr.aria-expanded]="sortOpen()" (click)="sortOpen.set(true)">
+            <app-icon name="sort-updown-arrow" />Sort
+          </button>
+          <button #filterBtn app-filter-button [attr.aria-expanded]="filterOpen()" (click)="filterOpen.set(true)">
+            <app-icon name="filter" />Filter
+          </button>
+        </app-filter-button-group>
+      </div>
+      <div class="toolbar-end">
+        <button app-button variant="secondary"><app-icon name="download-01" />Download Report</button>
+        <button app-button><app-icon name="plus-02-inverse" />Create Report</button>
+      </div>
+    </div>
+
+    <app-dropdown-panel [origin]="sortBtn" [(open)]="sortOpen" ariaLabel="Sort reports">
+      <app-option-list [options]="sortOptions" [formControl]="sort" ariaLabel="Sort by" />
+      <app-panel-actions>
+        <button app-button variant="secondary" size="sm" (click)="sort.reset()">Clear</button>
+        <button app-button size="sm" (click)="sortOpen.set(false)">Apply</button>
+      </app-panel-actions>
+    </app-dropdown-panel>
+
+    <app-dropdown-panel [origin]="filterBtn" [(open)]="filterOpen" ariaLabel="Filter reports">
+      <app-panel-section label="Date Created">
+        <app-input-field leadingIcon="calendar-01" placeholder="mmm-dd-yyyy" />
+      </app-panel-section>
+      <app-panel-section label="Expected Revenue (min-max)">
+        <div class="range-row">
+          <app-input-field placeholder="₱ 00.00" />
+          <img src="icons/range-dash.svg" alt="" width="8" height="1" />
+          <app-input-field placeholder="₱ 00.00" />
+        </div>
+      </app-panel-section>
+      <app-panel-actions>
+        <button app-button variant="secondary" size="sm">Clear</button>
+        <button app-button size="sm" (click)="filterOpen.set(false)">Apply</button>
+      </app-panel-actions>
+    </app-dropdown-panel>
+
+    <app-data-table
+      caption="Leasing reports"
+      [columns]="columns"
+      [rows]="rows"
+      selectable
+      [(selected)]="selected"
+    >
+      <ng-template appCell="id" [appCellRows]="rows" let-row>
+        <a class="report-id" href="#" (click)="$event.preventDefault()">{{ row.id }}</a>
+      </ng-template>
+      <ng-template appCell="actions" [appCellRows]="rows" let-row>
+        <span class="row-actions">
+          <button class="icon-btn" type="button" [attr.aria-label]="'View ' + row.id" (click)="lastAction.set('view ' + row.id)">
+            <app-icon name="eye-open-subtle" />
+          </button>
+          <button class="icon-btn" type="button" [attr.aria-label]="'Delete ' + row.id" (click)="lastAction.set('delete ' + row.id)">
+            <app-icon name="trash-04" />
+          </button>
+        </span>
+      </ng-template>
+    </app-data-table>
+
+    <app-pagination [pageCount]="10" [(page)]="page" />
+  </div>
+
+  <div class="row">
+    <button app-button variant="secondary" size="sm" [cdkMenuTriggerFor]="rowMenu">Action menu (Figma 641:37260)</button>
+    <ng-template #rowMenu>
+      <app-menu>
+        <button app-menu-item (triggered)="lastAction.set('view')"><app-icon name="eye-open" />View</button>
+        <button app-menu-item (triggered)="lastAction.set('delete')"><app-icon name="trash-03" />Delete</button>
+      </app-menu>
+    </ng-template>
+  </div>
+
+  <p class="note">
+    Selected: {{ selected().length }} · page {{ page() }} · sort {{ sort.value ?? 'none' }} · last action {{ lastAction() }}
+  </p>
+</section>
+
+<section>
+  <h2>Empty state</h2>
+  <div class="list-card empty">
+    <app-empty-state title="No available reports yet.">
+      <button app-button><app-icon name="plus-02-inverse" />Create Report</button>
+    </app-empty-state>
+  </div>
+</section>
+
+<section>
+  <h2>Date range (inline, and as a mobile bottom sheet)</h2>
+  <div class="calendar-box app-panel">
+    <app-date-range-calendar [formControl]="range" />
+  </div>
+  <div class="row">
+    <button app-button variant="secondary" (click)="openSheet(sheet)">Open bottom sheet</button>
+    <span class="note">Range: {{ formatRange(range.value) }}</span>
+  </div>
+  <ng-template #sheet>
+    <app-date-range-calendar [formControl]="range" />
+    <app-panel-actions>
+      <button app-button variant="secondary" size="sm" (click)="range.reset()">Clear</button>
+      <button app-button size="sm">Apply</button>
+    </app-panel-actions>
+  </ng-template>
+</section>

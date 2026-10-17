@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, booleanAttribute, inject, input } from '@angular/core';
 
 export type ButtonVariant =
   | 'primary' // brand fill — "Log in", "Stay on page"
@@ -30,4 +30,6 @@ export class Button {
   readonly size = input<ButtonSize>('md');
   /** Stretch to the container width (auth forms, dialog button groups). */
   readonly block = input(false, { transform: booleanAttribute });
+  /** Lets a dropdown panel anchor to this button via a template reference. */
+  readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 }

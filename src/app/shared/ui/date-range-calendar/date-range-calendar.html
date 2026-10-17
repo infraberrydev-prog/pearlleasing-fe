@@ -1,0 +1,58 @@
+<div class="month">
+  <button type="button" class="nav" aria-label="Previous month" (click)="shiftMonth(-1)">
+    <app-icon name="chevron-left" />
+  </button>
+  <h3 class="month-label" aria-live="polite">{{ monthLabel() }}</h3>
+  <button type="button" class="nav" aria-label="Next month" (click)="shiftMonth(1)">
+    <app-icon name="chevron-right" />
+  </button>
+</div>
+
+<div class="fields">
+  <div class="field" [class.is-empty]="!startLabel()">
+    <app-icon name="calendar-01" />
+    <span><span class="visually-hidden">Start date: </span>{{ startLabel() ?? 'mmm-dd-yyyy' }}</span>
+  </div>
+  <img class="dash" src="icons/range-dash.svg" alt="" width="8" height="1" />
+  <div class="field" [class.is-empty]="!endLabel()">
+    <app-icon name="calendar-01" />
+    <span><span class="visually-hidden">End date: </span>{{ endLabel() ?? 'mmm-dd-yyyy' }}</span>
+  </div>
+</div>
+
+<div class="grid" role="grid" [attr.aria-label]="monthLabel()" (keydown)="onGridKeydown($event)">
+  <div class="row weekdays" role="row">
+    @for (weekday of weekdays; track weekday) {
+      <span class="cell weekday" role="columnheader">{{ weekday }}</span>
+    }
+  </div>
+  @for (week of weeks(); track $index) {
+    <div class="row" role="row">
+      @for (day of week; track day.key) {
+        <button
+          #cell
+          type="button"
+          role="gridcell"
+          class="cell day"
+          [attr.data-key]="day.key"
+          [class.outside]="!day.inMonth"
+          [class.is-start]="day.isStart"
+          [class.is-end]="day.isEnd"
+          [class.in-range]="day.inRange"
+          [class.row-start]="day.rowStart"
+          [class.row-end]="day.rowEnd"
+          [class.is-today]="day.isToday"
+          [disabled]="day.disabled || isDisabled()"
+          [attr.tabindex]="day.key === tabbableKey() ? 0 : -1"
+          [attr.aria-selected]="day.isStart || day.isEnd || day.inRange"
+          [attr.aria-current]="day.isToday ? 'date' : null"
+          [attr.aria-label]="dayLabel(day)"
+          (click)="select(day)"
+          (blur)="onTouched()"
+        >
+          {{ day.date.getDate() }}
+        </button>
+      }
+    </div>
+  }
+</div>

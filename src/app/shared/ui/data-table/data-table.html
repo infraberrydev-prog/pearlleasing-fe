@@ -1,0 +1,54 @@
+<div class="scroller">
+  <table>
+    @if (caption()) {
+      <caption class="visually-hidden">{{ caption() }}</caption>
+    }
+    <thead>
+      <tr>
+        @if (selectable()) {
+          <th class="select" scope="col">
+            <app-checkbox
+              ariaLabel="Select all rows"
+              [checked]="allSelected()"
+              [indeterminate]="someSelected()"
+              (checkedChange)="toggleAll($event)"
+            />
+          </th>
+        }
+        @for (column of columns(); track column.key) {
+          <th
+            scope="col"
+            [class]="'align-' + (column.align ?? 'start')"
+            [style.width]="column.width ?? null"
+          >
+            {{ column.header }}
+          </th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track rowKey()(row)) {
+        <tr [class.is-selected]="isSelected(row)">
+          @if (selectable()) {
+            <td class="select">
+              <app-checkbox
+                ariaLabel="Select row"
+                [checked]="isSelected(row)"
+                (checkedChange)="toggleRow(row, $event)"
+              />
+            </td>
+          }
+          @for (column of columns(); track column.key) {
+            <td [class]="'align-' + (column.align ?? 'start')">
+              @if (templates().get(column.key); as tpl) {
+                <ng-container *ngTemplateOutlet="tpl; context: { $implicit: row, row: row }" />
+              } @else {
+                {{ value(row, column.key) }}
+              }
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

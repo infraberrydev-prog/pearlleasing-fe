@@ -12,8 +12,9 @@ import {
   Radio,
   RadioGroup,
 } from '../../shared/ui';
+import { ListBlocksDemo } from './list-blocks-demo';
 
-/** Dev-only review page for the shared UI primitives (step 2 of docs/figma-plan.md). */
+/** Dev-only review page for the shared UI primitives (steps 2 and 5 of docs/figma-plan.md). */
 @Component({
   selector: 'app-ui-gallery',
   imports: [
@@ -27,6 +28,7 @@ import {
     InputField,
     Radio,
     RadioGroup,
+    ListBlocksDemo,
   ],
   templateUrl: './ui-gallery.html',
   styleUrl: './ui-gallery.scss',

@@ -7,12 +7,12 @@ let nextId = 0;
 @Component({
   selector: 'app-radio-group',
   template: '<ng-content />',
+  styles: ':host { display: flex; flex-direction: column; gap: var(--spacing-md); }',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => RadioGroup), multi: true }],
   host: {
     role: 'radiogroup',
     '[attr.aria-label]': 'ariaLabel() ?? null',
-    style: 'display: flex; flex-direction: column; gap: var(--spacing-md);',
   },
 })
 export class RadioGroup<T = unknown> implements ControlValueAccessor {

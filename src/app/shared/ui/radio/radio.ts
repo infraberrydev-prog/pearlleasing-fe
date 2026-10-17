@@ -23,9 +23,12 @@ import { RadioGroup } from './radio-group';
   `,
   styleUrl: './radio.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.label-before]': 'labelPosition() === "before"' },
 })
 export class Radio<T = unknown> {
   readonly value = input.required<T>();
+  /** 'before' puts the label first and the circle at the far end (menu rows). */
+  readonly labelPosition = input<'after' | 'before'>('after');
 
   protected readonly group = inject<RadioGroup<T>>(RadioGroup);
   protected readonly checked = computed(() => this.group.value() === this.value());

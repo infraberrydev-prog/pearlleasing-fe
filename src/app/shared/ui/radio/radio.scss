@@ -53,3 +53,9 @@ input:disabled + .circle {
   color: var(--color-text-disabled);
   cursor: not-allowed;
 }
+
+:host(.label-before) .wrapper {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  width: 100%;
+}

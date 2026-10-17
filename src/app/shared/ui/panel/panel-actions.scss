@@ -1,0 +1,25 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+}
+
+.buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+
+  > ::ng-deep * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  @include bp.mobile {
+    flex-direction: column-reverse;
+
+    > ::ng-deep * {
+      flex: none;
+      width: 100%;
+    }
+  }
+}
