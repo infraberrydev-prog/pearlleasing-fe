@@ -1,0 +1,151 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+@use 'mixins';
+
+// Figma list card: white, border/subtle, 8px radius, 24px padding and gaps (16 on tablet/mobile).
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+  padding: var(--spacing-3xl);
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+
+  @include bp.tablet {
+    padding: var(--spacing-xl);
+  }
+
+  @include bp.mobile {
+    gap: var(--spacing-3xl);
+    padding: var(--spacing-xl);
+  }
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.toolbar-start,
+.toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+// Desktop 370px search; tablet 196px (Figma 1017:22102).
+.search {
+  width: 370px;
+}
+
+.toolbar--tablet .search {
+  width: 196px;
+}
+
+// Mobile (Figma 1087:21801): search, then Sort | Filter full width, then download + Create.
+.toolbar--mobile {
+  flex-direction: column;
+  gap: var(--spacing-md);
+
+  .toolbar-start {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search {
+    width: 100%;
+  }
+
+  .sort-filter {
+    display: flex;
+
+    ::ng-deep > button {
+      flex: 1 1 0;
+      justify-content: center;
+    }
+  }
+
+  .toolbar-end {
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-md);
+  }
+
+  .create {
+    flex: 1 1 0;
+  }
+}
+
+// Marks an applied sort or filter (not in Figma).
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circle);
+  background: var(--color-brand);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  transition: opacity 120ms ease;
+
+  &.is-loading {
+    opacity: 0.6;
+  }
+}
+
+.loading {
+  @include type.text(md);
+  margin: auto;
+  color: var(--color-text-subtler);
+}
+
+.state {
+  padding: 96px 0;
+
+  @include bp.mobile {
+    padding: 48px 0;
+  }
+}
+
+.report-id {
+  @include mixins.reset-button;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-brand);
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+// Figma actions cell: 24px icons, 24px apart, centred.
+.row-actions {
+  display: inline-flex;
+  gap: var(--spacing-3xl);
+}
+
+.icon-btn {
+  @include mixins.reset-button;
+  display: inline-flex;
+  border-radius: var(--radius-xs);
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+// Tablet/mobile cards 16px apart (Figma 374:6511).
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

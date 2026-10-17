@@ -1,0 +1,41 @@
+<form [formGroup]="form" (submit)="$event.preventDefault(); apply()">
+  <app-panel-section label="Date Created">
+    <button
+      type="button"
+      class="field"
+      [class.is-empty]="!createdLabel()"
+      [attr.aria-expanded]="calendarOpen()"
+      (click)="calendarOpen.set(!calendarOpen())"
+    >
+      <app-icon name="calendar-01" />
+      <span>{{ createdLabel() ?? 'mmm-dd-yyyy' }}</span>
+    </button>
+    @if (calendarOpen()) {
+      <app-date-range-calendar class="calendar" formControlName="created" />
+    }
+  </app-panel-section>
+
+  <app-panel-section [label]="amountLabel() + ' (min-max)'">
+    <div class="range">
+      <app-input-field type="text" placeholder="₱ 00.00" formControlName="amountMin" />
+      <img src="icons/range-dash.svg" alt="" width="8" height="1" />
+      <app-input-field type="text" placeholder="₱ 00.00" formControlName="amountMax" />
+    </div>
+  </app-panel-section>
+
+  <app-panel-section label="Last Updated">
+    <div class="field select">
+      <select formControlName="updated" aria-label="Last Updated">
+        @for (option of updatedOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+      <app-icon name="chevron-down" />
+    </div>
+  </app-panel-section>
+
+  <app-panel-actions>
+    <button app-button type="button" variant="secondary" size="sm" (click)="clear()">Clear</button>
+    <button app-button type="submit" size="sm">Apply</button>
+  </app-panel-actions>
+</form>

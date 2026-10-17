@@ -20,9 +20,10 @@
   width: 100%;
 }
 
+// 200px wide; height follows each image (empty 200×180, no results 200×123).
 .illustration {
   width: 200px;
-  height: 179.79px;
+  height: auto;
 }
 
 .text {

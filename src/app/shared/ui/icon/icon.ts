@@ -19,6 +19,7 @@ export type IconName =
   | 'chevron-left'
   | 'chevron-right'
   | 'close-inverse'
+  | 'dot-vertical-01'
   | 'download-01'
   | 'email'
   | 'eye-closed'

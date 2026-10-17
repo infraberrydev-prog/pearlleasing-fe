@@ -28,13 +28,15 @@ export type PanelOrigin = HTMLElement | { elementRef: ElementRef<HTMLElement> };
       [cdkConnectedOverlayOpen]="open()"
       [cdkConnectedOverlayPositions]="positions"
       [cdkConnectedOverlayHasBackdrop]="true"
+      [cdkConnectedOverlayPush]="true"
+      [cdkConnectedOverlayViewportMargin]="16"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
       (backdropClick)="open.set(false)"
       (detach)="open.set(false)"
       (overlayKeydown)="onKeydown($event)"
     >
       <div
-        class="app-panel"
+        class="app-panel app-dropdown-panel"
         role="dialog"
         [attr.aria-label]="ariaLabel() ?? null"
         [style.width.px]="width()"

@@ -372,6 +372,24 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - Disabled Previous/Next and the mobile pagination layout aren't drawn in Figma.
 - Tablet/mobile report cards, the filter form fields and wiring the toolbar to data belong to step 6.
 
+**Step 6 done (2026-10-17).** The Leasing Reports list is live at `/leasing`, on mock data (22 monthly reports).
+- `features/reports/` (shared with Expenses in step 9):
+  - `models/report.ts`: `ReportSummary`, `ReportQuery`, and `queryReports()` for search, filter, sort and paging.
+  - `report-list/` (presentational): the empty, no-results and data states. The table is shown at 1200px and wider; tablet and mobile get cards. Sort and Filter open as dropdowns on desktop/tablet and as bottom sheets on mobile. Delete and Download ask for confirmation.
+  - `report-card/`: the tablet card (eye + trash icons, dates side by side) and the mobile card (⋮ menu, dates stacked).
+  - `report-sort/` and `report-filter/`: the panel contents. Date Created opens the range calendar inline; a reversed min–max is swapped.
+- `features/leasing/`: `LeasingApi` + `MockLeasingApi` (list, delete, CSV export), an NgRx `leasing` feature (entity adapter, query, totals, loading) and effects (load on any query change, reload after delete, step back from an emptied page, save the CSV). These are provided on the leasing route.
+- The list page drives everything through the store. Report ID / eye → `/leasing/:id` and Create Report → `/leasing/new`; both are placeholder pages until steps 7–8.
+- `shared/pipes/format.pipes.ts` formats pesos ("₱ 100,500.00") and dates ("Jan 8, 2025 - 08:30:22"). The confirm dialog gained a `primary` tone with a custom icon (download).
+- Row actions follow the newest Figma table (927:39623: eye + trash). The older delete/download frames (664:…, 920:…) used a menu.
+
+**Step 6 gaps** (Figma call limit hit again; built from layer geometry):
+- Card text styles (sizes and weights) and colors are inferred from the table styles.
+- Missing asset: the `dot-vertical-01.svg` ⋮ icon (shown as a text ⋮ for now). The no-results illustration is in place (`public/images/no-results.svg`, from Figma 284:11262).
+- The no-results and download dialogs have placeholder "Text" copy in Figma; mine is "No reports match your search." / "Download N selected reports as a CSV file." The download dialog's button labels (Cancel / Download) and its icon tint are also mine.
+- The "Last Updated" filter options aren't in Figma; I used All / Updated / Not yet updated.
+- Not in Figma: Create Report on tablet (its button group is hidden there), pagination on tablet, the dot marking an applied sort/filter, and the loading text.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

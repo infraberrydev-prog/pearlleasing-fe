@@ -1,0 +1,145 @@
+@use 'mixins';
+
+// Figma 927:40111: 16px padding, checkbox then a 16px gap, border/subtle, 8px radius.
+// Card type styles weren't fetched; they follow the table's Nunito styles.
+:host {
+  display: flex;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-numeric);
+  color: var(--color-neutral-gray-900);
+}
+
+:host(.is-selected) {
+  background: var(--color-bg-hovered);
+}
+
+.select {
+  align-self: flex-start;
+}
+
+.body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.id-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+}
+
+.report-id {
+  @include mixins.reset-button;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+  color: var(--color-brand);
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.actions {
+  display: inline-flex;
+  gap: var(--spacing-xl);
+}
+
+.icon-btn {
+  @include mixins.reset-button;
+  display: inline-flex;
+  border-radius: var(--radius-xs);
+  color: var(--color-icon-subtle);
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.name {
+  margin: 0;
+  overflow: hidden;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.amount {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.label {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm-size);
+  line-height: var(--text-sm-line);
+}
+
+.amount-value {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-md-size);
+  line-height: var(--text-md-line);
+  color: var(--color-text-default);
+}
+
+// Figma divider: 8px tall row with a 1px line.
+.divider {
+  width: 100%;
+  height: 1px;
+  margin: 3.5px 0 11.5px;
+  border: 0;
+  background: var(--color-border-subtle);
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  margin: 0;
+
+  dt {
+    font-weight: var(--font-weight-bold);
+    font-size: var(--text-xs-size);
+    line-height: var(--text-xs-line);
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: var(--spacing-md) 0 0;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--text-sm-size);
+    line-height: var(--text-sm-line);
+    color: var(--color-text-default);
+  }
+}
+
+// Mobile: dates stacked 16px apart (Figma 920:14089).
+:host(.is-compact) .dates {
+  grid-template-columns: 1fr;
+}

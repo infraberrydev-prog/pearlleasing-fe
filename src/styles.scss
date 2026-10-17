@@ -57,7 +57,12 @@ img {
   overflow: clip;
 }
 
-// Bottom sheet scrolls inside when taller than the screen.
+// Panels scroll inside when taller than the screen.
+.app-dropdown-panel {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+
 .app-bottom-sheet {
   max-height: calc(100dvh - 16px);
   overflow-y: auto;

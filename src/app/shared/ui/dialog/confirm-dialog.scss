@@ -30,6 +30,11 @@
   &--danger {
     background: var(--color-bg-danger-secondary);
   }
+
+  // Download report (Figma 920:15289); fill not fetched, colors/bg/primary assumed.
+  &--primary {
+    background: var(--color-bg-primary);
+  }
 }
 
 .content {

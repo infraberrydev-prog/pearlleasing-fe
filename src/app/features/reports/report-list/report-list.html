@@ -1,0 +1,150 @@
+<div class="toolbar" [class]="'toolbar--' + layout()">
+  <div class="toolbar-start">
+    <app-input-field
+      class="search"
+      type="search"
+      leadingIcon="search-01"
+      placeholder="Search Report name"
+      [formControl]="search"
+    />
+    <app-filter-button-group class="sort-filter">
+      <button
+        #sortBtn
+        app-filter-button
+        [attr.aria-expanded]="sortOpen()"
+        [attr.aria-pressed]="sortActive()"
+        (click)="openSort(sortSheet)"
+      >
+        <app-icon name="sort-updown-arrow" />Sort
+        @if (sortActive()) {
+          <span class="dot" aria-hidden="true"></span>
+        }
+      </button>
+      <button
+        #filterBtn
+        app-filter-button
+        [attr.aria-expanded]="filterOpen()"
+        [attr.aria-pressed]="filterActive()"
+        (click)="openFilter(filterSheet)"
+      >
+        <app-icon name="filter" />Filter
+        @if (filterActive()) {
+          <span class="dot" aria-hidden="true"></span>
+        }
+      </button>
+    </app-filter-button-group>
+  </div>
+
+  <div class="toolbar-end">
+    @if (layout() === 'desktop') {
+      <button app-button type="button" variant="secondary" (click)="confirmDownload()">
+        <app-icon name="download-01" />Download Report
+      </button>
+    } @else {
+      <button
+        app-button
+        type="button"
+        variant="secondary"
+        aria-label="Download Report"
+        (click)="confirmDownload()"
+      >
+        <app-icon name="download-01" />
+      </button>
+    }
+    @if (!isEmpty()) {
+      <button app-button type="button" class="create" (click)="create.emit()">
+        <app-icon name="plus-02-inverse" />Create Report
+      </button>
+    }
+  </div>
+</div>
+
+<app-dropdown-panel [origin]="sortBtn" [(open)]="sortOpen" ariaLabel="Sort reports">
+  <app-report-sort [value]="query().sort" [amountLabel]="config().amountLabel" (applied)="applySort($event)" />
+</app-dropdown-panel>
+<app-dropdown-panel [origin]="filterBtn" [(open)]="filterOpen" ariaLabel="Filter reports">
+  <app-report-filter [value]="query().filter" [amountLabel]="config().amountLabel" (applied)="applyFilter($event)" />
+</app-dropdown-panel>
+<ng-template #sortSheet>
+  <app-report-sort [value]="query().sort" [amountLabel]="config().amountLabel" (applied)="applySort($event)" />
+</ng-template>
+<ng-template #filterSheet>
+  <app-report-filter [value]="query().filter" [amountLabel]="config().amountLabel" (applied)="applyFilter($event)" />
+</ng-template>
+
+@if (error(); as message) {
+  <app-alert tone="error">{{ message }}</app-alert>
+}
+
+<div class="results" [class.is-loading]="loading() && loaded()" [attr.aria-busy]="loading()">
+  @if (!loaded()) {
+    <p class="loading" role="status">Loading reports…</p>
+  } @else if (isEmpty()) {
+    <app-empty-state class="state" [title]="config().emptyTitle">
+      <button app-button type="button" (click)="create.emit()">
+        <app-icon name="plus-02-inverse" />Create Report
+      </button>
+    </app-empty-state>
+  } @else if (noResults()) {
+    <!-- Figma 284:11262: its copy is placeholder "Text", so the wording here is ours. -->
+    <app-empty-state
+      class="state"
+      title="No reports match your search."
+      description="Try a different report name or clear the filters."
+      illustration="images/no-results.svg"
+    >
+      <button app-button type="button" variant="secondary" (click)="clearSearchAndFilters()">
+        Clear search and filters
+      </button>
+    </app-empty-state>
+  } @else if (layout() === 'desktop') {
+    <app-data-table
+      [caption]="config().caption"
+      [columns]="columns()"
+      [rows]="reports()"
+      selectable
+      [(selected)]="selected"
+    >
+      <ng-template appCell="id" [appCellRows]="reports()" let-row>
+        <button type="button" class="report-id" (click)="view.emit(row.id)">{{ row.id }}</button>
+      </ng-template>
+      <ng-template appCell="amount" [appCellRows]="reports()" let-row>{{ row.amount | peso }}</ng-template>
+      <ng-template appCell="createdAt" [appCellRows]="reports()" let-row>{{ row.createdAt | reportDate }}</ng-template>
+      <ng-template appCell="updatedAt" [appCellRows]="reports()" let-row>{{ row.updatedAt | reportDate }}</ng-template>
+      <ng-template appCell="actions" [appCellRows]="reports()" let-row>
+        <span class="row-actions">
+          <button type="button" class="icon-btn" [attr.aria-label]="'View ' + row.id" (click)="view.emit(row.id)">
+            <app-icon name="eye-open-subtle" />
+          </button>
+          <button type="button" class="icon-btn" [attr.aria-label]="'Delete ' + row.id" (click)="confirmDelete(row)">
+            <app-icon name="trash-04" />
+          </button>
+        </span>
+      </ng-template>
+    </app-data-table>
+  } @else {
+    <ul class="cards">
+      @for (report of reports(); track report.id) {
+        <li>
+          <app-report-card
+            [report]="report"
+            [amountLabel]="config().amountLabel"
+            [compact]="layout() === 'mobile'"
+            [selected]="isSelected(report.id)"
+            (selectedChange)="setSelected(report.id, $event)"
+            (viewed)="view.emit(report.id)"
+            (deleted)="confirmDelete(report)"
+          />
+        </li>
+      }
+    </ul>
+  }
+</div>
+
+@if (loaded() && total() > 0) {
+  <app-pagination
+    [pageCount]="pageCount()"
+    [page]="query().page"
+    (pageChange)="queryChange.emit({ page: $event })"
+  />
+}

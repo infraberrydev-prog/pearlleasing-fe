@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   template: `
     <div class="content">
       @if (illustration(); as src) {
-        <img class="illustration" [src]="src" alt="" width="200" height="180" />
+        <img class="illustration" [src]="src" alt="" width="200" />
       }
       <div class="text">
         <h2 class="title">{{ title() }}</h2>
