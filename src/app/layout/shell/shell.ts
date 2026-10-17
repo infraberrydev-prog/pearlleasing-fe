@@ -32,6 +32,12 @@ export class Shell {
     this.sidebarExpanded.set(false);
   }
 
+  /** Focus the page content without changing the route's URL. */
+  protected skipToMain(event: Event): void {
+    event.preventDefault();
+    document.getElementById('main-content')?.focus();
+  }
+
   protected requestLogout(): void {
     this.closeSidebar();
     this.logout.confirmLogout();

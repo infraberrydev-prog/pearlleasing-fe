@@ -34,7 +34,8 @@
             <app-input-field
               [label]="field.label"
               required
-              placeholder="₱ 00.00"
+              prefix="₱"
+              placeholder="00.00"
               inputmode="decimal"
               [formControlName]="field.key"
               [error]="error(field.key, field.label)"

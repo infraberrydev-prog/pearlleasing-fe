@@ -451,6 +451,23 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - The expenses store mirrors the leasing store rather than sharing a generic factory. That's fine for two features; worth a refactor if more report types arrive.
 - Tablet/mobile expenses frames (374:7064, 385:23307) weren't fetched; they follow the shared list and the 1-column form.
 
+**Step 10 done (2026-10-17).** Accessibility pass and visual check at desktop (1440), tablet (834) and mobile (390), plus 320px.
+- **Automated audit:** axe-core 4.10.3 (dev dependency), rules WCAG 2.0/2.1 A + AA plus best practices, run in headless Chrome on 32 page states: login (+ error), 2FA, Leasing and Expenses list/create/detail at all three sizes, More, the expanded sidebar, Sort and Filter panels (with calendar), the delete dialog, form validation errors, the mobile card menu and the filter sheet.
+  - Fixed: placeholder and empty-field text contrast. Figma's `#a3a7ab` is 2.4:1; the new token `--color-text-placeholder` is `#71757a`, 4.64:1, the nearest grey that passes AA. Disabled text keeps `#a3a7ab`.
+  - Fixed: the sidebar is now a labelled landmark ("Sidebar"); the calendar month title is no longer a stray `<h3>`.
+  - Remaining (best practice, not WCAG): the CDK menu popup sits outside a landmark, because overlays are appended to `<body>`.
+- **Keyboard:** 18/18 checks with real key presses: login and Enter to submit, the skip link, Sort panel and Escape with focus returned, delete dialog focus trap and focus return, sidebar drawer trap and Escape, accordion rows, calendar arrow keys and Enter, mobile ⋮ menu arrows and Escape with focus return.
+  - Added: a "Skip to main content" link (first tab stop; visible on focus).
+- **Reflow (WCAG 1.4.10)** at 320px: fixed the 2FA code boxes overflowing; every page now fits without sideways scrolling (the data table scrolls inside its own box by design).
+- **Labels:** the search boxes and the filter's min/max amount boxes now have accessible names (`ariaLabel` on `input-field`), not just placeholders.
+- **Visual check** against Figma and the exported screens: amount fields now show a fixed "₱" before the value ("₱ 5600.00", per `docs/screens/unpaid-to-paid.png`), not only in the placeholder. Other pages matched.
+
+**Step 10 notes:**
+- The placeholder colour change is a deliberate deviation from Figma for AA contrast; worth telling the designer.
+- Not covered by automated checks: screen-reader announcements (spot-checked through roles and labels only) and real-device testing (iOS Safari, Android Chrome). Recommended before release.
+
+**Empty-state check (2026-10-17).** `public/images/empty-reports.svg` is the valid Figma export (200×179.8, 25 paths) and renders at 200×180. The list now passes it explicitly. With the mock APIs, open **`/leasing?empty`** or **`/expenses?empty`** to start with no reports and see the empty state (`features/reports/models/mock-options.ts`; it lasts until reloaded without `?empty`, and real APIs ignore it).
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

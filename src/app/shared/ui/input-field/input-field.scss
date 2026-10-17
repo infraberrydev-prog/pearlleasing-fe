@@ -56,7 +56,17 @@ input {
   color: var(--color-text-subtle);
 
   &::placeholder {
-    color: var(--color-text-disabled);
+    color: var(--color-text-placeholder);
+  }
+}
+
+.prefix {
+  @include type.text(md);
+  margin-right: calc(-1 * var(--spacing-sm));
+  color: var(--color-text-subtle);
+
+  &.is-empty {
+    color: var(--color-text-placeholder);
   }
 }
 

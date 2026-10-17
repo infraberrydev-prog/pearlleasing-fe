@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, defer, delay, of, throwError } from 'rxjs';
 import { ReportPage, ReportQuery, ReportSummary, queryReports } from '../../reports/models/report';
+import { mockStartsEmpty } from '../../reports/models/mock-options';
 import { buildReportCsv } from '../../reports/models/report-csv';
 import {
   LeaseRow,
@@ -86,7 +87,7 @@ const clone = <T>(value: T): T => structuredClone(value);
 
 @Injectable()
 export class MockLeasingApi extends LeasingApi {
-  private reports = seed();
+  private reports = mockStartsEmpty() ? [] : seed();
   private nextId = 25200 + this.reports.length;
 
   list(query: ReportQuery): Observable<ReportPage> {

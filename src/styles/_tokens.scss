@@ -14,6 +14,9 @@
   --color-text-subtler: #60656d;
   --color-text-muted: #555a60; // "Don't have an account?" footnote (not a Figma variable)
   --color-text-disabled: #a3a7ab;
+  // Placeholders and empty-field text. Figma uses #a3a7ab (2.4:1 on white); darkened to the
+  // nearest grey that meets WCAG AA 4.5:1 (4.64:1). Disabled text keeps #a3a7ab.
+  --color-text-placeholder: #71757a;
   --color-text-inverse: #ffffff;
   --color-text-link: var(--color-brand);
   --color-text-danger: #b70000;

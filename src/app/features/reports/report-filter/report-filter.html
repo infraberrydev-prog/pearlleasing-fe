@@ -17,9 +17,9 @@
 
   <app-panel-section [label]="amountLabel() + ' (min-max)'">
     <div class="range">
-      <app-input-field type="text" placeholder="₱ 00.00" formControlName="amountMin" />
+      <app-input-field type="text" prefix="₱" placeholder="00.00" inputmode="decimal" ariaLabel="Minimum amount" formControlName="amountMin" />
       <img src="icons/range-dash.svg" alt="" width="8" height="1" />
-      <app-input-field type="text" placeholder="₱ 00.00" formControlName="amountMax" />
+      <app-input-field type="text" prefix="₱" placeholder="00.00" inputmode="decimal" ariaLabel="Maximum amount" formControlName="amountMax" />
     </div>
   </app-panel-section>
 

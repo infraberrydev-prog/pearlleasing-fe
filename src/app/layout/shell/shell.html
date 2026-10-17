@@ -1,3 +1,6 @@
+<!-- First tab stop: jump past the navigation. -->
+<a class="skip-link" href="#main-content" (click)="skipToMain($event)">Skip to main content</a>
+
 <div class="rail-slot">
   <app-sidebar
     class="sidebar"
@@ -13,7 +16,7 @@
   <div class="backdrop" aria-hidden="true" (click)="closeSidebar()"></div>
 }
 
-<main class="main">
+<main class="main" id="main-content" tabindex="-1">
   <router-outlet />
 </main>
 

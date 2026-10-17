@@ -5,6 +5,7 @@
       type="search"
       leadingIcon="search-01"
       placeholder="Search Report name"
+      ariaLabel="Search reports by name or ID"
       [formControl]="search"
     />
     <app-filter-button-group class="sort-filter">
@@ -80,7 +81,7 @@
   @if (!loaded()) {
     <p class="loading" role="status">Loading reports…</p>
   } @else if (isEmpty()) {
-    <app-empty-state class="state" [title]="config().emptyTitle">
+    <app-empty-state class="state" [title]="config().emptyTitle" illustration="images/empty-reports.svg">
       <button app-button type="button" (click)="create.emit()">
         <app-icon name="plus-02-inverse" />Create Report
       </button>

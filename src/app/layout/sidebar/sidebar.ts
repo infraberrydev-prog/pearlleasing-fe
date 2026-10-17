@@ -14,7 +14,7 @@ import { NAV_ITEMS } from '../nav-items';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.is-expanded]': 'expanded()' },
+  host: { role: 'complementary', 'aria-label': 'Sidebar', '[class.is-expanded]': 'expanded()' },
 })
 export class Sidebar {
   readonly expanded = input(false, { transform: booleanAttribute });

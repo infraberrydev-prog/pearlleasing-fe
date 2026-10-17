@@ -68,3 +68,26 @@ describe('InputField', () => {
     expect(input.disabled).toBe(true);
   });
 });
+
+@Component({
+  imports: [InputField],
+  template: `
+    <app-input-field prefix="₱" placeholder="00.00" ariaLabel="Minimum amount" />
+    <app-input-field label="Water" required ariaLabel="ignored when there is a label" />
+    <app-input-field label="TIN No." optional />
+  `,
+})
+class MarkersHost {}
+
+describe('InputField markers', () => {
+  it('shows a prefix, names unlabelled inputs and marks required/optional labels', () => {
+    const fixture = TestBed.createComponent(MarkersHost);
+    fixture.detectChanges();
+    const [amount, water, tin] = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('app-input-field'));
+    expect(amount.querySelector('.prefix')!.textContent).toBe('₱');
+    expect(amount.querySelector('input')!.getAttribute('aria-label')).toBe('Minimum amount');
+    expect(water.querySelector('input')!.hasAttribute('aria-label')).toBe(false);
+    expect(water.querySelector('.required')!.textContent).toBe('*');
+    expect(tin.querySelector('.optional')!.textContent).toBe('(optional)');
+  });
+});

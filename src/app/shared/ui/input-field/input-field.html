@@ -16,6 +16,9 @@
   @if (leadingIcon(); as icon) {
     <app-icon [name]="icon" />
   }
+  @if (prefix(); as text) {
+    <span class="prefix" [class.is-empty]="!value()" aria-hidden="true">{{ text }}</span>
+  }
   <input
     [id]="inputId()"
     [type]="effectiveType()"
@@ -26,6 +29,7 @@
     [attr.autocomplete]="autocomplete()"
     [attr.list]="list() ?? null"
     [attr.inputmode]="inputmode() ?? null"
+    [attr.aria-label]="label() ? null : (ariaLabel() ?? null)"
     [attr.aria-invalid]="invalid()"
     [attr.aria-describedby]="describedBy()"
     (input)="handleInput($event)"

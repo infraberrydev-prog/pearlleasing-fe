@@ -84,6 +84,7 @@ describe('ReportList', () => {
     host.grandTotal.set(0);
     fixture.detectChanges();
     expect(el.querySelector('app-empty-state')!.textContent).toContain('No available reports yet.');
+    expect(el.querySelector('app-empty-state img')!.getAttribute('src')).toBe('images/empty-reports.svg');
   });
 
   it('shows the no-results state and can clear search and filters', () => {

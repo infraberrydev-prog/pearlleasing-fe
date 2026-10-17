@@ -67,7 +67,7 @@
     <fieldset class="section">
       <legend>Rental Payment</legend>
       <div class="grid">
-        <app-input-field class="half" label="Monthly Rental" required placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="half" label="Monthly Rental" required prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="monthlyRental" [error]="error('monthlyRental', 'Monthly Rental')" />
         <app-select-field class="half" label="Payment Status" required placeholder="Select status"
           [options]="statusOptions" formControlName="paymentStatus" [error]="error('paymentStatus', 'Payment Status')" />
@@ -82,15 +82,15 @@
     <fieldset class="section">
       <legend>Utilities</legend>
       <div class="grid">
-        <app-input-field class="third" label="Electricity" required placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="third" label="Electricity" required prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="electricity" [error]="error('electricity', 'Electricity')" />
-        <app-input-field class="third" label="Water" required placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="third" label="Water" required prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="water" [error]="error('water', 'Water')" />
-        <app-input-field class="third" label="Other Utilities" required placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="third" label="Other Utilities" required prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="otherUtilities" [error]="error('otherUtilities', 'Other Utilities')" />
-        <app-input-field class="half" label="CUSA Fee" optional placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="half" label="CUSA Fee" optional prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="cusaFee" [error]="error('cusaFee', 'CUSA Fee')" />
-        <app-input-field class="half" label="Pylon Rental" optional placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="half" label="Pylon Rental" optional prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="pylonRental" [error]="error('pylonRental', 'Pylon Rental')" />
       </div>
     </fieldset>
@@ -98,7 +98,7 @@
     <fieldset class="section">
       <legend>Deductions</legend>
       <div class="grid">
-        <app-input-field class="half" label="10% Penalty" optional placeholder="₱ 00.00" inputmode="decimal"
+        <app-input-field class="half" label="10% Penalty" optional prefix="₱" placeholder="00.00" inputmode="decimal"
           formControlName="penalty" [error]="error('penalty', '10% Penalty')" />
       </div>
     </fieldset>

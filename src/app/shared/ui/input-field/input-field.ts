@@ -51,6 +51,10 @@ export class InputField implements ControlValueAccessor {
   /** Id of a <datalist> with suggestions (searchable fields). */
   readonly list = input<string>();
   readonly inputmode = input<string>();
+  /** Fixed text before the value, e.g. "₱" on amount fields (Figma "₱ 5600.00"). */
+  readonly prefix = input<string>();
+  /** Accessible name when there is no visible label (search boxes, min/max pairs). */
+  readonly ariaLabel = input<string>();
   readonly inputId = input(`app-input-${nextId++}`);
 
   protected readonly value = signal('');

@@ -61,3 +61,28 @@
     display: none;
   }
 }
+
+// Hidden until focused with the keyboard.
+.skip-link {
+  position: fixed;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  z-index: 40;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-bg-default);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-brand);
+  font-weight: var(--font-weight-semibold);
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+.main:focus {
+  outline: none;
+}

@@ -47,7 +47,8 @@
 
   // Mobile frame 361:10713: 48×54 boxes, spread across the row. Digit size isn't drawn filled.
   @include bp.mobile {
-    flex: 0 0 48px;
+    // Shrinks on very narrow screens (320px) so the row never scrolls sideways.
+    flex: 0 1 48px;
     aspect-ratio: auto;
     height: 54px;
     font-size: 28px;

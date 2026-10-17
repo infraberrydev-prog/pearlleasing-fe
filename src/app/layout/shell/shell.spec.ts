@@ -89,6 +89,14 @@ describe('Shell', () => {
     expect(dispatch).toHaveBeenCalledWith(authActions.logout());
   });
 
+  it('starts with a skip link that focuses the page content', () => {
+    const { el } = setup();
+    const skip = el.querySelector<HTMLAnchorElement>('a.skip-link')!;
+    expect(el.querySelector('a, button')).toBe(skip);
+    skip.click();
+    expect(document.activeElement).toBe(el.querySelector('main#main-content'));
+  });
+
   it('renders the mobile bottom nav with Leasing, Expenses and More', () => {
     const { el } = setup();
     const tabs = Array.from(el.querySelectorAll('app-bottom-nav a')).map((a) => a.textContent?.trim());
