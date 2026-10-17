@@ -1,0 +1,16 @@
+// Figma text styles ("Text sm/Medium", "Text md/Semibold", ...) as mixins.
+
+@mixin text($size, $weight: regular) {
+  font-family: var(--font-family-base);
+  font-size: var(--text-#{$size}-size);
+  line-height: var(--text-#{$size}-line);
+  font-weight: var(--font-weight-#{$weight});
+  letter-spacing: 0;
+}
+
+@mixin display($size, $weight: semibold) {
+  font-family: var(--font-family-base);
+  font-size: var(--display-#{$size}-size);
+  line-height: var(--display-#{$size}-line);
+  font-weight: var(--font-weight-#{$weight});
+}

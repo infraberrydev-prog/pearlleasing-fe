@@ -1,0 +1,83 @@
+<main class="gallery">
+  <h1>UI primitives</h1>
+  <p class="note">Dev-only page. Items marked <em>inferred</em> have no Figma frame yet.</p>
+
+  <section>
+    <h2>Buttons</h2>
+    <div class="row">
+      <button app-button>Log in</button>
+      <button app-button variant="secondary">Cancel</button>
+      <button app-button variant="tertiary"><app-icon name="arrow-left-sm" />Back to log in</button>
+      <button app-button variant="danger">Delete</button>
+      <button app-button variant="danger-subtle">Leave &amp; Discard</button>
+      <button app-button disabled>Disabled <em>(inferred)</em></button>
+      <button app-button size="sm" variant="secondary">Small <em>(inferred)</em></button>
+    </div>
+    <div class="narrow"><button app-button block>Verify &amp; Continue</button></div>
+  </section>
+
+  <section>
+    <h2>Input fields</h2>
+    <div class="narrow stack">
+      <app-input-field label="Username" leadingIcon="email" [formControl]="username" />
+      <app-input-field label="Password" type="password" leadingIcon="lock-02" [formControl]="password">
+        <a labelAction class="link" href="#">Forgot password?</a>
+      </app-input-field>
+      <app-input-field label="With hint" placeholder="Text" hint="Hint text" />
+      <app-input-field label="Error" placeholder="Text" error="This field is required." />
+      <app-input-field label="Disabled" [formControl]="disabledField" />
+    </div>
+    <p class="note">Values: {{ username.value }} / {{ password.value }}</p>
+  </section>
+
+  <section>
+    <h2>Alerts</h2>
+    <div class="narrow stack">
+      <app-alert tone="error">Incorrect username or password.</app-alert>
+      @if (toastVisible()) {
+        <app-alert tone="success" dismissible (dismissed)="toastVisible.set(false)">
+          Report successfully submitted!
+        </app-alert>
+      } @else {
+        <button app-button variant="secondary" (click)="toastVisible.set(true)">Show toast again</button>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2>Checkbox &amp; radio</h2>
+    <div class="row">
+      <app-checkbox ariaLabel="Unchecked" />
+      <app-checkbox [formControl]="agree">Checked <em>(inferred)</em></app-checkbox>
+      <app-checkbox indeterminate ariaLabel="Indeterminate" />
+    </div>
+    <app-radio-group [formControl]="status" ariaLabel="Payment status">
+      <app-radio value="unpaid">Unpaid</app-radio>
+      <app-radio value="paid">Paid <em>(selected state inferred)</em></app-radio>
+    </app-radio-group>
+    <p class="note">agree = {{ agree.value }}, status = {{ status.value }}</p>
+  </section>
+
+  <section>
+    <h2>Chips</h2>
+    <div class="row">
+      <app-chip tone="warning">Unpaid</app-chip>
+      <app-chip tone="success">Paid <em>(inferred)</em></app-chip>
+      <app-chip>Neutral <em>(inferred)</em></app-chip>
+    </div>
+  </section>
+
+  <section>
+    <h2>Divider</h2>
+    <app-divider />
+  </section>
+
+  <section>
+    <h2>Dialogs</h2>
+    <div class="row">
+      <button app-button variant="secondary" (click)="openDiscard()">Discard report dialog</button>
+      <button app-button variant="secondary" (click)="openDelete()">Delete report dialog</button>
+    </div>
+    <p class="note">Last result: {{ lastResult() }}</p>
+  </section>
+</main>

@@ -1,0 +1,32 @@
+@use 'mixins';
+
+:host {
+  position: relative;
+  display: flex;
+  gap: var(--spacing-xl);
+  align-items: flex-start;
+  width: 100%;
+  padding: var(--spacing-3xl);
+  background: var(--color-bg-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: clip;
+}
+
+.close {
+  @include mixins.reset-button;
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  display: inline-flex;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}

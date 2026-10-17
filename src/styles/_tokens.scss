@@ -1,0 +1,102 @@
+// Design tokens from the Figma file "Client-1 (Copy)", page "Pearl Place Leasing Corp.(JJSSI)".
+// Names mirror the Figma variable paths (e.g. `colors/text/default` -> `--color-text-default`).
+// Values marked "not a Figma variable" were read from raw fills in the design.
+
+:root {
+  // ── Brand (not a Figma variable — raw fills on buttons/links/icons) ──
+  --color-brand: #146fa5;
+  --color-brand-subtle: #e8f1f6; // shield-check tile on 2FA
+  --color-auth-panel: #ddf3ff; // login intro panel
+
+  // ── Text ──
+  --color-text-default: #1f2328;
+  --color-text-subtle: #383f49;
+  --color-text-subtler: #60656d;
+  --color-text-muted: #555a60; // "Don't have an account?" footnote (not a Figma variable)
+  --color-text-disabled: #a3a7ab;
+  --color-text-inverse: #ffffff;
+  --color-text-link: var(--color-brand);
+  --color-text-danger: #b70000;
+  --color-text-danger-bold: #6f0000;
+  --color-text-success: #005826;
+  --color-text-warning: #6b5902;
+
+  // ── Icon ──
+  --color-icon-default: #1f2328;
+  --color-icon-subtle: #383f49;
+  --color-icon-subtler: #60656d;
+  --color-icon-inverse: #ffffff;
+  --color-icon-danger: #900b09;
+  --color-icon-warning: #bf6a02;
+
+  // ── Background ──
+  --color-bg-default: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-bg-hovered: #f6f7f7;
+  --color-bg-disabled: #f6f7f7;
+  --color-bg-transparent: #ffffff00;
+  --color-bg-primary: #e6effa;
+  --color-bg-danger: #fae6e6;
+  --color-bg-danger-bold: #b70000;
+  --color-bg-danger-secondary: #fdd3d0;
+  --color-bg-success: #e6efea;
+  --color-bg-success-bold: #005826;
+  --color-bg-warning: #fffbe6;
+  --color-bg-warning-secondary: #fff1c2;
+
+  // ── Border ──
+  --color-border-default: #d6d7d8;
+  --color-border-subtle: #e3e4e5;
+  --color-border-input: #c3c5c7;
+  --color-border-danger: #c90000;
+  --color-border-success-subtle: #8ab69d;
+  --color-border-warning-subtle: #ffec8c;
+
+  // ── Neutral ──
+  --color-neutral-gray-900: #666668;
+
+  // ── Spacing ──
+  --spacing-none: 0;
+  --spacing-xs: 2px;
+  --spacing-sm: 4px;
+  --spacing-md: 8px;
+  --spacing-lg: 12px;
+  --spacing-xl: 16px;
+  --spacing-2xl: 20px;
+  --spacing-3xl: 24px;
+
+  // ── Border radius ──
+  --radius-none: 0;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-circle: 1000px;
+
+  // ── Effects ──
+  --shadow-lg: 0 12px 16px -4px rgb(51 57 66 / 8%), 0 4px 6px -2px rgb(51 57 66 / 3%);
+  --blur-xl: 40px;
+  --color-backdrop: rgb(31 35 40 / 80%); // modal scrim (not a Figma variable — approximated from screenshots)
+
+  // ── Typography ──
+  --font-family-base: 'Lato', system-ui, sans-serif;
+  --font-family-numeric: 'Nunito', system-ui, sans-serif; // Figma "Typography/Font Family/Primary Font"
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --text-xs-size: 12px;
+  --text-xs-line: 16px;
+  --text-sm-size: 14px;
+  --text-sm-line: 20px;
+  --text-md-size: 16px;
+  --text-md-line: 24px;
+  --text-lg-size: 20px;
+  --text-lg-line: 28px;
+  --display-sm-size: 28px; // page titles ("Log in to Pearl Place")
+  --display-sm-line: 32px;
+  --display-md-size: 32px; // auth intro heading
+  --display-md-line: 48px;
+}

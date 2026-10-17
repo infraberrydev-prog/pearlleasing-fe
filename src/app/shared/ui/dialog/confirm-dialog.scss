@@ -1,0 +1,69 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+
+:host {
+  display: block;
+  width: 564px;
+  max-width: calc(100vw - 32px);
+}
+
+.featured-icon {
+  display: flex;
+  flex-shrink: 0;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-circle);
+
+  &--warning {
+    background: var(--color-bg-warning-secondary);
+  }
+
+  &--danger {
+    background: var(--color-bg-danger-secondary);
+  }
+}
+
+.content {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+  min-width: 0;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  // keep the title clear of the close button
+  padding-right: var(--spacing-2xl);
+}
+
+.title {
+  @include type.text(lg, semibold);
+  margin: 0;
+  color: var(--color-text-default);
+}
+
+.message {
+  @include type.text(md);
+  margin: 0;
+  color: var(--color-text-subtle);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+
+  > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+// Tablet/mobile modal frames weren't fetched; stack the buttons on narrow screens.
+@include bp.mobile {
+  .actions {
+    flex-direction: column-reverse;
+  }
+}

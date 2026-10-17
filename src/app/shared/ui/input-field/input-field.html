@@ -1,0 +1,45 @@
+@if (label()) {
+  <div class="label-row">
+    <label class="label" [for]="inputId()">{{ label() }}</label>
+    <ng-content select="[labelAction]" />
+  </div>
+}
+
+<div class="control">
+  @if (leadingIcon(); as icon) {
+    <app-icon [name]="icon" />
+  }
+  <input
+    [id]="inputId()"
+    [type]="effectiveType()"
+    [value]="value()"
+    [placeholder]="placeholder()"
+    [disabled]="isDisabled()"
+    [required]="required()"
+    [attr.autocomplete]="autocomplete()"
+    [attr.aria-invalid]="invalid()"
+    [attr.aria-describedby]="describedBy()"
+    (input)="handleInput($event)"
+    (blur)="onTouched()"
+  />
+  <ng-content select="[trailing]" />
+  @if (isPassword()) {
+    <button
+      type="button"
+      class="toggle"
+      [disabled]="isDisabled()"
+      [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+      [attr.aria-pressed]="passwordVisible()"
+      [attr.aria-controls]="inputId()"
+      (click)="passwordVisible.set(!passwordVisible())"
+    >
+      <app-icon [name]="passwordVisible() ? 'eye-open' : 'eye-closed'" />
+    </button>
+  }
+</div>
+
+@if (error()) {
+  <p class="message message--error" [id]="inputId() + '-desc'">{{ error() }}</p>
+} @else if (hint()) {
+  <p class="message" [id]="inputId() + '-desc'">{{ hint() }}</p>
+}

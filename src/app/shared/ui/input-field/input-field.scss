@@ -1,0 +1,89 @@
+@use 'typography' as type;
+@use 'mixins';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.label-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.label {
+  @include type.text(sm, medium);
+  color: var(--color-text-default);
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  overflow: clip;
+
+  &:focus-within {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 1px var(--color-brand);
+  }
+}
+
+input {
+  @include type.text(md);
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text-subtle);
+
+  &::placeholder {
+    color: var(--color-text-subtler);
+  }
+}
+
+.toggle {
+  @include mixins.reset-button;
+  display: inline-flex;
+  border-radius: var(--radius-xs);
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.message {
+  @include type.text(sm);
+  margin: 0;
+  color: var(--color-text-subtler);
+
+  &--error {
+    color: var(--color-text-danger);
+  }
+}
+
+:host(.is-invalid) .control {
+  border-color: var(--color-border-danger);
+
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--color-border-danger);
+  }
+}
+
+:host(.is-disabled) .control {
+  background: var(--color-bg-disabled);
+
+  input {
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+}

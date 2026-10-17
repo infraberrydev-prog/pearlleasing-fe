@@ -307,6 +307,22 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 
 ---
 
+## Progress
+
+**Steps 1–2 done (2026-10-17).** Changes from the plan:
+- Static files live in `public/` (`public/icons`, `public/images`), the Angular 22 default, not `src/assets`.
+- `password-field` was folded into `shared/ui/input-field` (`type="password"` adds the show/hide toggle).
+- Radio is `app-radio-group` + `app-radio`.
+- `@angular/cdk` 22.2.3 was added for dialogs. Use `ConfirmDialogService.confirm(...)`.
+- `/dev/ui` is a temporary gallery of the primitives. Delete it once real screens exist.
+- The `mediflexlogo-2025` instance is only inside the Gmail mockup in the OTP Email frame, not the app, so open question 6 is resolved.
+
+**Not yet confirmed against Figma** (the Figma MCP Starter-plan call limit was hit):
+- Inferred states: checked checkbox, selected radio, "Paid" chip, button hover/pressed/disabled, small button size, tablet/mobile dialog layout, modal backdrop color.
+- Missing asset: `public/icons/eye-open.svg` (password "visible" state).
+- Auth illustration (node `353:8605`) is ~80 vector layers. Export it from Figma as a single SVG for step 3.
+- Lato from Google Fonts has no 500/600 weights, so Medium renders as 400 and SemiBold as 700. Self-host Lato 2.0 if exact weights matter.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

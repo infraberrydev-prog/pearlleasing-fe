@@ -1,0 +1,82 @@
+@use 'typography' as type;
+@use 'mixins';
+
+:host {
+  @include type.text(md, semibold);
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border: 1px solid var(--btn-border, transparent);
+  border-radius: var(--radius-md);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+
+  // Hover/pressed are not drawn in Figma; derived by darkening the fill.
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--btn-bg) 92%, black);
+  }
+
+  &:active:not(:disabled) {
+    background: color-mix(in srgb, var(--btn-bg) 84%, black);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+:host(.app-button--sm) {
+  padding: var(--spacing-md) var(--spacing-xl);
+}
+
+:host(.app-button--block) {
+  display: flex;
+  width: 100%;
+}
+
+:host(.app-button--primary) {
+  --btn-bg: var(--color-brand);
+  --btn-fg: var(--color-text-inverse);
+}
+
+:host(.app-button--secondary) {
+  --btn-bg: var(--color-bg-default);
+  --btn-fg: var(--color-text-subtle);
+  --btn-border: var(--color-border-default);
+}
+
+:host(.app-button--tertiary) {
+  --btn-bg: var(--color-bg-transparent);
+  --btn-fg: var(--color-text-subtler);
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-hovered);
+  }
+}
+
+:host(.app-button--danger) {
+  --btn-bg: var(--color-bg-danger-bold);
+  --btn-fg: var(--color-text-inverse);
+}
+
+:host(.app-button--danger-subtle) {
+  --btn-bg: var(--color-bg-danger);
+  --btn-fg: var(--color-text-danger-bold);
+}
+
+// Last so it wins over the variant custom properties.
+:host(:disabled),
+:host([aria-disabled='true']) {
+  --btn-bg: var(--color-bg-disabled);
+  --btn-fg: var(--color-text-disabled);
+  --btn-border: transparent;
+  cursor: not-allowed;
+}

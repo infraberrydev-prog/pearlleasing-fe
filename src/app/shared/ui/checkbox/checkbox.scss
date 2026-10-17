@@ -1,0 +1,76 @@
+@use 'typography' as type;
+@use 'mixins';
+
+:host {
+  display: inline-flex;
+}
+
+.wrapper {
+  @include type.text(md);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--color-text-default);
+  cursor: pointer;
+}
+
+input {
+  @include mixins.visually-hidden;
+}
+
+.box {
+  position: relative;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+}
+
+input:focus-visible + .box {
+  @include mixins.focus-ring;
+}
+
+input:checked + .box,
+input:indeterminate + .box {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+// Check mark (no Figma asset for the checked state)
+input:checked + .box::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid var(--color-text-inverse);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input:indeterminate + .box::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 8px;
+  height: 2px;
+  background: var(--color-text-inverse);
+}
+
+input:disabled + .box {
+  background: var(--color-bg-disabled);
+  border-color: var(--color-border-subtle);
+}
+
+input:disabled ~ * {
+  color: var(--color-text-disabled);
+}
+
+.wrapper:has(input:disabled) {
+  cursor: not-allowed;
+}

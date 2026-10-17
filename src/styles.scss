@@ -1,1 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/cdk' as cdk;
+@use 'tokens';
+@use 'typography' as type;
+
+@include cdk.overlay();
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  @include type.text(md);
+  color: var(--color-text-default);
+  background: var(--color-bg-default);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+// Modal scrim used by the shared dialog service.
+.app-dialog-backdrop {
+  background: var(--color-backdrop);
+}

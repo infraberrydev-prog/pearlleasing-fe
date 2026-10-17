@@ -1,0 +1,58 @@
+@use 'typography' as type;
+
+.gallery {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px 96px;
+}
+
+h1 {
+  @include type.display(sm);
+}
+
+h2 {
+  @include type.text(lg, semibold);
+  margin: 0 0 var(--spacing-xl);
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-3xl) 0;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.narrow {
+  max-width: 528px;
+}
+
+.note {
+  @include type.text(sm);
+  margin: 0;
+  color: var(--color-text-subtler);
+}
+
+.link {
+  @include type.text(sm, medium);
+  color: var(--color-text-link);
+  text-decoration: none;
+}
+
+em {
+  font-style: normal;
+  color: var(--color-text-subtler);
+}

@@ -1,0 +1,33 @@
+@use 'typography' as type;
+
+:host {
+  @include type.text(sm, medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-lg);
+  border: 1px solid var(--chip-border);
+  border-radius: var(--radius-circle);
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  white-space: nowrap;
+}
+
+:host(.app-chip--warning) {
+  --chip-bg: var(--color-bg-warning);
+  --chip-border: var(--color-border-warning-subtle);
+  --chip-fg: var(--color-text-warning);
+}
+
+:host(.app-chip--success) {
+  --chip-bg: var(--color-bg-success);
+  --chip-border: var(--color-border-success-subtle);
+  --chip-fg: var(--color-text-success);
+}
+
+:host(.app-chip--neutral) {
+  --chip-bg: var(--color-bg-hovered);
+  --chip-border: var(--color-border-default);
+  --chip-fg: var(--color-text-subtle);
+}

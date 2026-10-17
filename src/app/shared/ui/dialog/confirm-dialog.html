@@ -1,0 +1,33 @@
+<app-dialog-shell (closed)="ref.close()">
+  <div class="featured-icon" [class]="'featured-icon--' + tone()">
+    <app-icon [name]="icon()" />
+  </div>
+
+  <div class="content">
+    <div class="text">
+      <h2 class="title" id="confirm-dialog-title">{{ data.title }}</h2>
+      @if (data.message) {
+        <p class="message" id="confirm-dialog-message">{{ data.message }}</p>
+      }
+    </div>
+
+    <div class="actions">
+      <button
+        app-button
+        type="button"
+        [variant]="data.cancelVariant ?? 'secondary'"
+        (click)="ref.close(false)"
+      >
+        {{ data.cancelLabel }}
+      </button>
+      <button
+        app-button
+        type="button"
+        [variant]="data.confirmVariant ?? 'primary'"
+        (click)="ref.close(true)"
+      >
+        {{ data.confirmLabel }}
+      </button>
+    </div>
+  </div>
+</app-dialog-shell>
