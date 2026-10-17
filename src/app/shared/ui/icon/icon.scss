@@ -1,8 +1,13 @@
 :host {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   width: var(--icon-size);
   height: var(--icon-size);
+  font-size: calc(var(--icon-size) * 0.5);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
 }
 
 img {

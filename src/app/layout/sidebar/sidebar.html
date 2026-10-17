@@ -1,0 +1,51 @@
+<div class="top">
+  <div class="logo-row">
+    @if (expanded()) {
+      <div class="logo">
+        <img src="images/pearl-place-logo.png" alt="Pearl Place Leasing Corporation" />
+      </div>
+    }
+    <button
+      type="button"
+      class="toggle"
+      [attr.aria-label]="expanded() ? 'Collapse sidebar' : 'Expand sidebar'"
+      [attr.aria-expanded]="expanded()"
+      [attr.title]="expanded() ? null : 'Expand sidebar'"
+      (click)="toggled.emit()"
+    >
+      <app-icon name="layout-left">☰</app-icon>
+    </button>
+  </div>
+
+  <nav class="nav" aria-label="Main">
+    @for (item of items; track item.path) {
+      <a
+        class="item"
+        [routerLink]="item.path"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        [attr.aria-label]="expanded() ? null : item.label"
+        [attr.title]="expanded() ? null : item.label"
+        (click)="navigated.emit()"
+      >
+        <app-icon [name]="item.icon">{{ item.short }}</app-icon>
+        @if (expanded()) {
+          <span class="label">{{ item.label }}</span>
+        }
+      </a>
+    }
+  </nav>
+</div>
+
+<button
+  type="button"
+  class="item"
+  [attr.aria-label]="expanded() ? null : 'Log out'"
+  [attr.title]="expanded() ? null : 'Log out'"
+  (click)="logoutRequested.emit()"
+>
+  <app-icon name="logout-02">LO</app-icon>
+  @if (expanded()) {
+    <span class="label">Log out</span>
+  }
+</button>

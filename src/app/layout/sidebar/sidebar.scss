@@ -1,0 +1,108 @@
+@use 'typography' as type;
+@use 'mixins';
+
+// Geometry from Figma: 16px padding; rail content 40px wide, panel content 280px;
+// 40px buttons with a 4px gap; logo row 48px, nav starts 72px from the top.
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 72px;
+  height: 100%;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-default);
+  border-right: 1px solid var(--color-border-subtle);
+}
+
+:host(.is-expanded) {
+  width: 312px;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+}
+
+// Logo PNG has padding; same crop as the login page, scaled to 72×49.
+.logo {
+  position: relative;
+  width: 72px;
+  height: 49px;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    left: -20.88%;
+    top: -11.9%;
+    width: 141.76%;
+    height: 136.51%;
+    max-width: none;
+  }
+}
+
+.toggle {
+  @include mixins.reset-button;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--color-icon-subtle);
+
+  &:hover {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+// Figma "_Sidebar button". Colors are not confirmed against Figma yet.
+.item {
+  @include mixins.reset-button;
+  @include type.text(md, medium);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  height: 40px;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-subtle);
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+
+  &.is-active {
+    background: var(--color-bg-primary);
+    color: var(--color-brand);
+  }
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

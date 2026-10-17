@@ -1,0 +1,62 @@
+@use 'breakpoints' as bp;
+
+:host {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--color-bg-default);
+}
+
+// The rail keeps its 72px in the flow; the expanded sidebar grows over the page.
+.rail-slot {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-shrink: 0;
+  width: 72px;
+  height: 100dvh;
+
+  @include bp.mobile {
+    display: none;
+  }
+}
+
+.sidebar {
+  position: absolute;
+  inset: 0 auto 0 0;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: var(--color-backdrop);
+
+  @include bp.mobile {
+    display: none;
+  }
+}
+
+// Figma content padding: desktop 48, tablet 24, mobile 16.
+.main {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 48px;
+
+  @include bp.tablet {
+    padding: var(--spacing-3xl);
+  }
+
+  @include bp.mobile {
+    padding: var(--spacing-xl) var(--spacing-xl) calc(68px + var(--spacing-xl));
+  }
+}
+
+.bottom-nav {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 20;
+
+  @include bp.tablet-up {
+    display: none;
+  }
+}

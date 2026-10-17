@@ -1,0 +1,27 @@
+@use 'typography' as type;
+@use 'mixins';
+
+// Figma: 358×56 card, 16px padding, 24px icon, 8px gap, 14/20 label.
+.row {
+  @include mixins.reset-button;
+  @include type.text(sm, medium);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--spacing-xl);
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text-default);
+  text-align: left;
+
+  &:hover {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}

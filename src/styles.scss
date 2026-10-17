@@ -1,6 +1,7 @@
 @use '@angular/cdk' as cdk;
 @use 'tokens';
 @use 'typography' as type;
+@use 'breakpoints' as bp;
 
 @include cdk.overlay();
 
@@ -26,6 +27,22 @@ body {
 img {
   display: block;
   max-width: 100%;
+}
+
+// Routed page inside the shell: title row then content.
+// Figma gap below the title: desktop 32, tablet 24, mobile 16.
+.app-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  @include bp.tablet {
+    gap: var(--spacing-3xl);
+  }
+
+  @include bp.mobile {
+    gap: var(--spacing-xl);
+  }
 }
 
 // Modal scrim used by the shared dialog service.

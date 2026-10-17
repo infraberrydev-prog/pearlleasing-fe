@@ -336,6 +336,20 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - Tablet/mobile auth layout was built from frame geometry only, because design context couldn't be fetched. The tablet/mobile error states aren't drawn and reuse the desktop styling.
 - `eye-open.svg` is still missing, so the "show password" state renders a broken icon.
 
+**Step 4 done (2026-10-17).** App shell, built from frame geometry. Figma access was still blocked, so no colors or icons were fetched.
+- Decision (with the user): follow Figma. The "Top app bar" and "User Card Dropdown" layers are hidden on every shell frame, so there is no top bar or user menu. Each page shows its title at the top of the content.
+- The Figma frame names are swapped. "Uncollapsed - Sidebar" (367:15039) shows the 72px icon rail; "Collapsed - Sidebar" (367:15213) shows the 312px panel over the page with a backdrop. Built as drawn: the rail is the default, and the toggle (`layout-left`) opens the panel as an overlay. The panel closes on the toggle, the backdrop, Escape or navigating, and traps focus while open.
+- Desktop and tablet use the rail; mobile uses a bottom nav (Leasing Reports, Expenses Reports, More). The mobile "More" page holds the Log out row (385:23942).
+- Log out (the sidebar's bottom button, or More → Log out) opens the confirm dialog and then signs out to `/login`.
+- `layout/`: `shell/`, `sidebar/`, `bottom-nav/`, `page-header/`, `more/`, `page-placeholder/`, `nav-items.ts`, `logout.service.ts`. The global `.app-page` class sets the title-to-content gap (32/24/16).
+- Routes: `/login` and `/dev/ui` are outside the shell. `/` (guarded) holds the shell with `leasing`, `expenses` and `more`, and `/` redirects to `/leasing`. Leasing and Expenses are placeholder pages.
+- `app-icon` now hides a missing SVG and shows its projected fallback. The rail shows `LR` / `ER` / `LO` / `☰` until the icons exist.
+
+**Step 4 gaps:**
+- Icons to export into `public/icons`: `layout-left.svg`, `logout-02.svg`, plus the nav icons saved as `nav-leasing-reports.svg`, `nav-expenses-reports.svg` and `nav-more.svg` (their Figma names are unknown, because they sit inside the `_Sidebar button` / `Bottom navigation` instances).
+- Unconfirmed against Figma: sidebar and bottom-nav colors, active/hover states and the label type style; the page background (white is used); the bottom nav tab set and labels.
+- The logout dialog body text is a placeholder ("Text") in Figma; I used "You will need to log in again to access your reports." Button styles (Cancel secondary, Log out primary) are inferred.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

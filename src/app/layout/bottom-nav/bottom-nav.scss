@@ -1,0 +1,39 @@
+@use 'typography' as type;
+@use 'mixins';
+
+:host {
+  display: flex;
+  height: 68px;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--color-bg-default);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.tab {
+  @include type.text(xs, semibold);
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+  color: var(--color-text-subtler);
+  text-decoration: none;
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+    outline-offset: -2px;
+  }
+
+  &.is-active {
+    color: var(--color-brand);
+  }
+}
+
+.label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
