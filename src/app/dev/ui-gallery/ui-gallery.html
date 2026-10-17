@@ -1,6 +1,12 @@
 <main class="gallery">
   <h1>UI primitives</h1>
   <p class="note">Dev-only page. Items marked <em>inferred</em> have no Figma frame yet.</p>
+  @if (user(); as user) {
+    <p class="note">
+      Signed in as <strong>{{ user.displayName }}</strong>.
+      <button app-button variant="secondary" size="sm" (click)="logout()">Log out</button>
+    </p>
+  }
 
   <section>
     <h2>Buttons</h2>

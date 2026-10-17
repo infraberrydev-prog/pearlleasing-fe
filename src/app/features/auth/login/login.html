@@ -1,0 +1,43 @@
+<app-auth-layout showIntro>
+  <form class="login" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <header class="header">
+      <div class="logo">
+        <img src="images/pearl-place-logo.png" alt="Pearl Place Leasing Corporation" />
+      </div>
+      <h1 class="title">Log in to Pearl Place</h1>
+      <p class="subtitle">Enter your username and password to continue.</p>
+    </header>
+
+    <div class="fields">
+      @if (errorMessage(); as message) {
+        <app-alert tone="error">{{ message }}</app-alert>
+      }
+      <div class="inputs">
+        <app-input-field
+          label="Username"
+          leadingIcon="email"
+          autocomplete="username"
+          formControlName="username"
+          [error]="fieldError('username', 'Username')"
+        />
+        <app-input-field
+          label="Password"
+          type="password"
+          leadingIcon="lock-02"
+          autocomplete="current-password"
+          formControlName="password"
+          [error]="fieldError('password', 'Password')"
+        />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button app-button type="submit" block [disabled]="pending()" [attr.aria-busy]="pending()">
+        Log in
+      </button>
+      <p class="footnote">
+        Don’t have an account? <span class="link">Contact your administrator.</span>
+      </p>
+    </div>
+  </form>
+</app-auth-layout>

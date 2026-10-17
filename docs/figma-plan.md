@@ -320,8 +320,21 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 **Not yet confirmed against Figma** (the Figma MCP Starter-plan call limit was hit):
 - Inferred states: checked checkbox, selected radio, "Paid" chip, button hover/pressed/disabled, small button size, tablet/mobile dialog layout, modal backdrop color.
 - Missing asset: `public/icons/eye-open.svg` (password "visible" state).
-- Auth illustration (node `353:8605`) is ~80 vector layers. Export it from Figma as a single SVG for step 3.
 - Lato from Google Fonts has no 500/600 weights, so Medium renders as 400 and SemiBold as 700. Self-host Lato 2.0 if exact weights matter.
+
+**Step 3 done (2026-10-17).** Login and 2FA on desktop, tablet and mobile.
+- `core/auth/` holds the models, the `AuthApi` contract, `MockAuthApi`, session storage, the NgRx `auth` feature (actions/reducer/effects), guards (`authGuard`, `guestGuard`, `otpChallengeGuard`) and the bearer-token interceptor (a 401 signs the user out). `provideAuth()` wires it up.
+- Mock credentials: any username, password `password`, code `123456`. The session is kept in `sessionStorage`, so it survives a reload.
+- `shared/ui/otp-input` is the 6-box code input (auto-advance, Backspace, paste, one-time-code autofill).
+- `features/auth/`: `login/`, `two-factor/`, `auth-layout/` (desktop intro panel or centred over the pattern), and `auth-illustration/`.
+- The illustration is rebuilt from its 99 exported layers in `public/images/auth-illustration/` and matches the Figma render. A single SVG export from Figma can still replace it.
+- `/` is guarded and shows the UI gallery (with a temporary Log out button) until the step 4 shell exists.
+
+**Step 3 gaps:**
+- "Forgot password?" is hidden: the error frame renders it at opacity 0 and there's no flow (open question 1).
+- Copy without a Figma source: required-field errors ("Username is required."), the generic "Something went wrong" error, and the illustration's alt text.
+- Tablet/mobile auth layout was built from frame geometry only, because design context couldn't be fetched. The tablet/mobile error states aren't drawn and reuse the desktop styling.
+- `eye-open.svg` is still missing, so the "show password" state renders a broken icon.
 
 ## 5. Open questions for the designer or client
 

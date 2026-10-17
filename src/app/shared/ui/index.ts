@@ -8,5 +8,6 @@ export * from './dialog/dialog-shell';
 export * from './divider/divider';
 export * from './icon/icon';
 export * from './input-field/input-field';
+export * from './otp-input/otp-input';
 export * from './radio/radio';
 export * from './radio/radio-group';

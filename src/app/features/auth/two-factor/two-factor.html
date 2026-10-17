@@ -1,0 +1,50 @@
+<app-auth-layout>
+  <form class="two-factor" (submit)="$event.preventDefault(); verify()" novalidate>
+    <header class="header">
+      <div class="badge"><app-icon name="shield-check" [size]="60" /></div>
+      <div class="text">
+        <h1 class="title">Two-Factor Authentication</h1>
+        <p class="subtitle">
+          We've sent a 6-digit verification code to
+          <strong>{{ challenge()?.maskedEmail }}.</strong><br />
+          Enter below to verify your identity.
+        </p>
+      </div>
+    </header>
+
+    <app-otp-input
+      class="code"
+      [length]="codeLength"
+      [formControl]="code"
+      [error]="errorMessage()"
+    />
+
+    <div class="actions">
+      <button
+        app-button
+        type="submit"
+        block
+        [disabled]="pending() || code.invalid"
+        [attr.aria-busy]="pending()"
+      >
+        Verify &amp; Continue
+      </button>
+
+      <p class="resend" aria-live="polite">
+        Didn’t receive the code?
+        @if (resendIn() > 0) {
+          <span>Resend in {{ resendIn() }}s</span>
+        } @else {
+          <button type="button" class="resend-link" [disabled]="pending()" (click)="resend()">
+            Resend Code
+          </button>
+        }
+      </p>
+
+      <button app-button type="button" variant="tertiary" block (click)="backToLogin()">
+        <app-icon name="arrow-left-sm" />
+        Back to log in
+      </button>
+    </div>
+  </form>
+</app-auth-layout>

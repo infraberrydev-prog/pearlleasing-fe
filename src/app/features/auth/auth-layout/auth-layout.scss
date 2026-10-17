@@ -1,0 +1,117 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+
+:host {
+  position: relative;
+  display: flex;
+  min-height: 100dvh;
+  background: var(--color-bg-default);
+  overflow: clip;
+}
+
+// Background pattern at 10% opacity (Figma image "b4efb3b8-…", sized/offset per frame).
+@mixin pattern($width, $height, $left, $top) {
+  content: '';
+  position: absolute;
+  left: $left;
+  top: $top;
+  width: $width;
+  height: $height;
+  background: url('/images/auth-bg-pattern.jpg') center / cover no-repeat;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+// Tablet (834 frame) and mobile (390 frame): pattern behind the whole page.
+:host::before {
+  @include pattern(2558px, 1439px, -753px, -230px);
+
+  @include bp.mobile {
+    @include pattern(1768px, 995px, -531px, -124px);
+  }
+
+  // Desktop has no page-level pattern; with the intro it sits in the blue panel instead.
+  @include bp.desktop {
+    content: none;
+  }
+}
+
+.intro {
+  position: relative;
+  display: none;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  min-width: 0;
+  padding: 96px 64px;
+  background: var(--color-auth-panel);
+  overflow: clip;
+
+  &::before {
+    @include pattern(3155px, 1775px, -930px, -412px);
+  }
+
+  @include bp.desktop {
+    display: flex;
+  }
+}
+
+.intro-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  width: 100%;
+}
+
+.intro-title {
+  @include type.display(md);
+  margin: 0;
+  color: var(--color-text-default);
+}
+
+.intro-subtitle {
+  @include type.text(lg);
+  margin: 0;
+  color: var(--color-text-subtle);
+}
+
+// Figma: 680px wide, allowed to run into the 64px side padding at 1440.
+.illustration {
+  position: relative;
+  flex-shrink: 0;
+  width: min(680px, calc(100% + 88px));
+}
+
+.form-panel {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 96px 64px;
+
+  @include bp.mobile {
+    align-items: flex-start;
+    padding: 78px var(--spacing-xl) 48px;
+  }
+}
+
+.form-container {
+  width: 100%;
+  max-width: 528px;
+
+  @include bp.tablet {
+    max-width: 466px;
+  }
+}
+
+:host(.with-intro) .form-panel {
+  @include bp.desktop {
+    background: var(--color-bg-default);
+    padding: 96px;
+  }
+}

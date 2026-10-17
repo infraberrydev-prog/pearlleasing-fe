@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { authActions, authFeature } from '../../core/auth';
 import {
   Alert,
   Button,
@@ -34,6 +36,13 @@ import {
 })
 export class UiGallery {
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly store = inject(Store);
+
+  protected readonly user = this.store.selectSignal(authFeature.selectUser);
+
+  protected logout(): void {
+    this.store.dispatch(authActions.logout());
+  }
 
   protected readonly username = new FormControl('userpearl02');
   protected readonly password = new FormControl('secret123');

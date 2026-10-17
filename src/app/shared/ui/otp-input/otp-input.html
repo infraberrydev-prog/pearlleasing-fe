@@ -1,0 +1,24 @@
+<div class="fields">
+  @for (i of slots(); track i) {
+    <input
+      #box
+      class="box"
+      type="text"
+      inputmode="numeric"
+      maxlength="1"
+      [attr.autocomplete]="i === 0 ? 'one-time-code' : 'off'"
+      [attr.aria-label]="'Digit ' + (i + 1) + ' of ' + length()"
+      [attr.aria-invalid]="!!error()"
+      [value]="digits()[i] ?? ''"
+      [disabled]="isDisabled()"
+      (input)="handleInput(i, $event)"
+      (keydown)="handleKeydown(i, $event)"
+      (paste)="handlePaste(i, $event)"
+      (focus)="selectOnFocus($event)"
+      (blur)="onTouched()"
+    />
+  }
+</div>
+@if (error()) {
+  <p class="error" role="alert">{{ error() }}</p>
+}

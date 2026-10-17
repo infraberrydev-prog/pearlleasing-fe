@@ -1,0 +1,85 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+
+.login {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xl);
+  text-align: center;
+}
+
+// The exported PNG has padding around the mark; Figma crops it into a 96×66 box.
+.logo {
+  position: relative;
+  width: 96px;
+  height: 66.46px;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    left: -20.88%;
+    top: -11.9%;
+    width: 141.76%;
+    height: 136.51%;
+    max-width: none;
+  }
+}
+
+.title {
+  @include type.display(sm);
+  margin: 0;
+  color: var(--color-text-default);
+
+  @include bp.mobile {
+    font-size: 24px;
+    line-height: 28px;
+  }
+}
+
+.subtitle {
+  @include type.text(md);
+  margin: 0;
+  color: var(--color-text-subtle);
+
+  @include bp.mobile {
+    @include type.text(sm);
+  }
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3xl);
+}
+
+.footnote {
+  @include type.text(sm, medium);
+  margin: 0;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.link {
+  color: var(--color-text-link);
+}
