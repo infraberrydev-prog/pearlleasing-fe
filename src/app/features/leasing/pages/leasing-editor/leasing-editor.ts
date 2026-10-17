@@ -67,7 +67,8 @@ const ROWS_PER_PAGE = 10;
     PanelActions,
   ],
   templateUrl: './leasing-editor.html',
-  styleUrl: './leasing-editor.scss',
+  // Shared with the expenses editor.
+  styleUrl: '../../../reports/report-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeasingEditor implements HasUnsavedChanges {

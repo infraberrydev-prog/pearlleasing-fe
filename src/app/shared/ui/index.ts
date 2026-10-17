@@ -13,6 +13,7 @@ export * from './filter-button/filter-button';
 export * from './icon/icon';
 export * from './input-field/input-field';
 export * from './menu/menu';
+export * from './notice-toast/notice-toast';
 export * from './option-list/option-list';
 export * from './otp-input/otp-input';
 export * from './pagination/pagination';

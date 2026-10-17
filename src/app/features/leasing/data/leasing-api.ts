@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, defer, delay, of, throwError } from 'rxjs';
 import { ReportPage, ReportQuery, ReportSummary, queryReports } from '../../reports/models/report';
+import { buildReportCsv } from '../../reports/models/report-csv';
 import {
   LeaseRow,
   LeasingLookups,
@@ -132,11 +133,8 @@ export class MockLeasingApi extends LeasingApi {
   export(ids: readonly string[]): Observable<Blob> {
     return defer(() => {
       const rows = (ids.length ? this.reports.filter((r) => ids.includes(r.id)) : this.reports).map(summarize);
-      const csv = [
-        'Report ID,Report Name,Expected Revenue,Date & Time Created,Last Updated',
-        ...rows.map((r) => [r.id, `"${r.name}"`, r.amount.toFixed(2), r.createdAt, r.updatedAt ?? ''].join(',')),
-      ].join('\n');
-      return of(new Blob([csv], { type: 'text/csv' }));
+      const csv = buildReportCsv(rows, 'Expected Revenue');
+      return of(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     }).pipe(delay(LATENCY_MS));
   }
 

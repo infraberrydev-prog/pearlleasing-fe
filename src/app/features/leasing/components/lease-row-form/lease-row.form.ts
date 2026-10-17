@@ -1,15 +1,10 @@
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AMOUNT_PATTERN as AMOUNT, parseAmount } from '../../../../shared/utils/amount';
 import { LeaseRow, PaymentStatus, rowTotal } from '../../models/leasing-report';
 
-/** Amounts are typed as text ("1,500.50") and parsed on save. */
-const AMOUNT = /^\s*\d{1,3}(,?\d{3})*(\.\d{1,2})?\s*$/;
-const MOBILE = /^[+\d][\d\s-]{6,17}$/;
+export { parseAmount };
 
-export function parseAmount(text: string | null | undefined): number | null {
-  if (!text || text.trim() === '') return null;
-  const value = Number(text.replace(/,/g, ''));
-  return Number.isFinite(value) ? value : null;
-}
+const MOBILE = /^[+\d][\d\s-]{6,17}$/;
 
 const formatAmount = (value: number | null) => (value === null ? '' : value.toFixed(2));
 

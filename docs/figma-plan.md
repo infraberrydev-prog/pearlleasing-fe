@@ -437,6 +437,20 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - Figma's "Total rows" figure (55) doesn't match its 10-page pagination; here it is the number of rows matching the search.
 - The old view-report modal with a file preview (99:2494, "Name of file / 1 / 100%") looks superseded by the detail page and isn't built. Confirm whether file attachments are needed.
 
+**Step 9 done (2026-10-17).** Expenses Reports at `/expenses`, `/expenses/new` and `/expenses/:id`. The form follows the user-provided screenshot of 561:20578 (`docs/screens/expenses.png`).
+- List: the shared `features/reports` list with an Expenses config ("Total Expenses", EP IDs, `Expenses reports` caption). Search, sort, filter (with "Total Expenses (min-max)"), cards on tablet/mobile, delete, download, empty and no-results states all come from the shared components.
+- Form (`pages/expenses-editor/`): Report Name, an **Expenses** section with four required amounts (Electricity, Payroll, Water, Maintenance Expenses) in a 2×2 grid (1 column on mobile), and Total Amount.
+  - Create: Discard / Submit Report.
+  - Detail `/expenses/:id` (385:23308): title "EP… - name", Cancel / Update Report (enabled once something changes).
+  - The same discard / cancel-edit dialogs and leave-page guard as Leasing.
+- Data and state: `ExpensesApi` + `MockExpensesApi` (14 monthly "Expenses for …" reports), and an NgRx `expenses` feature with effects mirroring Leasing (load, delete, CSV export, detail, save, return to the list with the success toast).
+- Shared now: `report-editor.scss` (page chrome for both editors, moved from Leasing), `shared/ui/notice-toast` (success toast for both lists), and `shared/utils/amount.ts` (amount pattern and parsing).
+
+**Step 9 gaps:**
+- Expenses has no rows, so the detail page has no search, sort or paging. Figma's "Total rows: 02/03" footer text in these frames looks left over from the Leasing template and isn't shown.
+- The expenses store mirrors the leasing store rather than sharing a generic factory. That's fine for two features; worth a refactor if more report types arrive.
+- Tablet/mobile expenses frames (374:7064, 385:23307) weren't fetched; they follow the shared list and the 1-column form.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?
