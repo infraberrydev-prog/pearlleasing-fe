@@ -1,9 +1,9 @@
 <form class="card" [formGroup]="form" (submit)="$event.preventDefault(); submit()" novalidate>
   <header class="top-bar">
-    <button type="button" class="back" aria-label="Back" (click)="leave()">
+    <button type="button" class="back" aria-label="Back to Leasing Reports" (click)="leave()">
       <app-icon name="chevron-left" />
     </button>
-    <h1 class="title">{{ isEdit ? 'Edit Report' : 'Create Report' }}</h1>
+    <h1 class="title">{{ title() }}</h1>
   </header>
 
   <div class="content">
@@ -11,7 +11,7 @@
       <app-alert tone="error">{{ error }}</app-alert>
     }
 
-    @if (isEdit && editor().loading) {
+    @if (isDetail && editor().loading) {
       <p class="loading" role="status">Loading report…</p>
     } @else {
       <p class="intro">Provide the necessary details to complete this report.</p>
@@ -27,32 +27,83 @@
 
       <app-divider />
 
+      @if (isDetail) {
+        <div class="toolbar">
+          <app-input-field
+            class="search"
+            type="search"
+            leadingIcon="search-01"
+            placeholder="Search vendor or lessee name"
+            (input)="search.set($any($event.target).value)"
+          />
+          <button
+            #sortBtn
+            app-filter-button
+            [attr.aria-expanded]="sortOpen()"
+            [attr.aria-pressed]="statusSort() !== null"
+            (click)="openSort(sortSheet)"
+          >
+            <app-icon name="sort-updown-arrow" />Sort
+            @if (statusSort()) {
+              <span class="dot" aria-hidden="true"></span>
+            }
+          </button>
+        </div>
+
+        <app-dropdown-panel [origin]="sortBtn" [(open)]="sortOpen" [width]="212" ariaLabel="Sort by status">
+          <ng-container *ngTemplateOutlet="sortContent" />
+        </app-dropdown-panel>
+        <ng-template #sortSheet>
+          <ng-container *ngTemplateOutlet="sortContent" />
+        </ng-template>
+        <ng-template #sortContent>
+          <app-option-list [options]="statusOptions" [formControl]="statusSortDraft" ariaLabel="Payment status first" />
+          <app-panel-actions>
+            <button app-button type="button" variant="secondary" size="sm" (click)="applySort(null)">Clear</button>
+            <button app-button type="button" size="sm" (click)="applySort(statusSortDraft.value)">Apply</button>
+          </app-panel-actions>
+        </ng-template>
+      }
+
       <div class="rows">
-        @for (row of rows.controls; track row; let i = $index) {
+        @for (item of pageRows(); track item.row) {
           <app-lease-row-form
-            [form]="row"
-            [index]="i"
+            [form]="item.row"
+            [index]="item.index"
             [lookups]="lookups()"
             [listIds]="listIds"
+            [showTools]="!isDetail"
+            [showStatus]="isDetail"
             [canRemove]="rows.length > 1"
-            [expanded]="isExpanded(row)"
-            (expandedChange)="setExpanded(row, $event)"
-            (duplicate)="duplicateRow(i)"
-            (remove)="removeRow(i)"
+            [expanded]="isExpanded(item.row)"
+            (expandedChange)="setExpanded(item.row, $event)"
+            (duplicate)="duplicateRow(item.index)"
+            (remove)="removeRow(item.index)"
           />
+        } @empty {
+          <p class="no-rows" role="status">No rows match your search.</p>
         }
       </div>
 
       <button app-button type="button" variant="secondary" block class="add-row" (click)="addRow()">
         <app-icon name="plus-02-inverse" tint />Add Row
       </button>
+
+      @if (isDetail) {
+        <p class="row-count">Total rows: {{ visibleCount() }}</p>
+        @if (pageCount() > 1) {
+          <app-pagination [pageCount]="pageCount()" [(page)]="page" />
+        }
+      }
     }
   </div>
 
   <footer class="footer">
-    <button app-button type="button" variant="danger-subtle" (click)="discard()">Discard</button>
+    <button app-button type="button" variant="danger-subtle" (click)="discard()">
+      {{ isDetail ? 'Cancel' : 'Discard' }}
+    </button>
     <button app-button type="submit" [disabled]="!canSubmit()" [attr.aria-busy]="editor().saving">
-      {{ isEdit ? 'Save Changes' : 'Submit Report' }}
+      {{ isDetail ? 'Update Report' : 'Submit Report' }}
     </button>
   </footer>
 </form>

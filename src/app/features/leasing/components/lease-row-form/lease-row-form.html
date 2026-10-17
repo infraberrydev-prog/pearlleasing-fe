@@ -7,11 +7,17 @@
     (click)="expanded.set(!expanded())"
   >
     <app-icon [name]="expanded() ? 'chevron-down' : 'chevron-right'" />
+    @if (showStatus() && status(); as status) {
+      <app-chip class="status" [tone]="status === 'paid' ? 'success' : 'warning'">
+        {{ status === 'paid' ? 'Paid' : 'Unpaid' }}
+      </app-chip>
+    }
     <span class="summary">
       <span class="row-label">Row {{ index() + 1 }} -</span>
       {{ summary() }}
     </span>
   </button>
+  @if (showTools()) {
   <div class="tools">
     <button type="button" class="tool" [attr.aria-label]="'Edit row ' + (index() + 1)" (click)="expanded.set(true)">
       <!-- Exported cropped to 15×15 (no padding), so drawn at 15px to match the 20px copy icon. -->
@@ -30,6 +36,7 @@
       <app-icon name="trash-03" [size]="20" />
     </button>
   </div>
+  }
 </div>
 
 @if (expanded()) {

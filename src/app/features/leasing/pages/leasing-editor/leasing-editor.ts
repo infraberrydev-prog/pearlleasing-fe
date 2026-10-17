@@ -3,30 +3,69 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  TemplateRef,
   computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NgTemplateOutlet } from '@angular/common';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { DialogRef } from '@angular/cdk/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Alert, Button, ConfirmDialogService, Divider, Icon, InputField } from '../../../../shared/ui';
-import { HasUnsavedChanges, confirmDiscard } from '../../../../shared/utils/unsaved-changes.guard';
+import { map } from 'rxjs';
+import {
+  Alert,
+  BottomSheet,
+  Button,
+  ConfirmDialogService,
+  Divider,
+  DropdownPanel,
+  FilterButton,
+  Icon,
+  InputField,
+  Option,
+  OptionList,
+  Pagination,
+  PanelActions,
+} from '../../../../shared/ui';
+import { DiscardKind, HasUnsavedChanges, confirmDiscard } from '../../../../shared/utils/unsaved-changes.guard';
 import { LeaseRowFormComponent, LookupListIds } from '../../components/lease-row-form/lease-row-form';
 import { LeaseRowForm, createRowForm, toLeaseRow } from '../../components/lease-row-form/lease-row.form';
-import { LeasingReportDetail } from '../../models/leasing-report';
+import { LeasingReportDetail, PaymentStatus } from '../../models/leasing-report';
 import { leasingEditorActions } from '../../store/leasing.actions';
 import { leasingFeature } from '../../store/leasing.feature';
 
+/** Figma detail page: ten rows per page (238:2740). */
+const ROWS_PER_PAGE = 10;
+
 /**
- * Create / edit a leasing report (Figma 315:6645 empty, 315:6937 row expanded,
- * 308:3133 filled, 316:7921 discard). `/leasing/new` creates; `/leasing/:id/edit` edits.
+ * Leasing report form.
+ * - Create (`/leasing/new`, Figma 315:6937): rows with edit / duplicate / delete, Discard + Submit Report.
+ * - Detail (`/leasing/:id`, Figma 238:2740 / 311:4004): rows with Unpaid / Paid chips, search,
+ *   sort by status, ten rows per page, Cancel + Update Report. Changing a row's Payment Status
+ *   from Unpaid to Paid and pressing Update Report is the "Unpaid → Paid" flow.
  */
 @Component({
   selector: 'app-leasing-editor',
-  imports: [ReactiveFormsModule, Alert, Button, Divider, Icon, InputField, LeaseRowFormComponent],
+  imports: [
+    NgTemplateOutlet,
+    ReactiveFormsModule,
+    Alert,
+    Button,
+    Divider,
+    DropdownPanel,
+    FilterButton,
+    Icon,
+    InputField,
+    LeaseRowFormComponent,
+    OptionList,
+    Pagination,
+    PanelActions,
+  ],
   templateUrl: './leasing-editor.html',
   styleUrl: './leasing-editor.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,28 +74,91 @@ export class LeasingEditor implements HasUnsavedChanges {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly bottomSheet = inject(BottomSheet);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
-  protected readonly isEdit = this.id !== null;
+  /** Detail page of an existing report (otherwise the create form). */
+  protected readonly isDetail = this.id !== null;
 
   protected readonly editor = this.store.selectSignal(leasingFeature.selectEditor);
   protected readonly lookups = this.store.selectSignal(leasingFeature.selectLookups);
+  private readonly isMobile = toSignal(
+    inject(BreakpointObserver).observe('(max-width: 767.98px)').pipe(map((s) => s.matches)),
+    { initialValue: false },
+  );
 
   protected readonly form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     rows: new FormArray<LeaseRowForm>([createRowForm()]),
   });
 
-  /** Expanded rows, by form instance so the state follows a row when others are removed. */
-  protected readonly expanded = signal(new Set<LeaseRowForm>(this.isEdit ? [] : [this.form.controls.rows.at(0)]));
-  /** Bumps on every form change so totals and the Submit state re-evaluate. */
+  /** Expanded rows, by form instance so the state follows a row when others move. */
+  protected readonly expanded = signal(new Set<LeaseRowForm>(this.isDetail ? [] : [this.form.controls.rows.at(0)]));
+  /** Bumps on every form change so derived values re-evaluate. */
   private readonly formVersion = signal(0);
+  /**
+   * Bumps only when rows are added, removed or loaded. The detail list re-sorts and re-filters
+   * on this (and on search/sort changes), not on typing, so a row being edited stays in place,
+   * e.g. it doesn't jump away when switched from Unpaid to Paid while "Unpaid first" is on.
+   */
+  private readonly rowsVersion = signal(0);
+  private submitted = false;
+
+  // Detail page toolbar
+  protected readonly search = signal('');
+  protected readonly statusSort = signal<PaymentStatus | null>(null);
+  protected readonly statusSortDraft = new FormControl<PaymentStatus | null>(null);
+  protected readonly sortOpen = signal(false);
+  protected readonly page = signal(1);
+  private sheetRef: DialogRef | null = null;
+  protected readonly statusOptions: Option<PaymentStatus>[] = [
+    { value: 'unpaid', label: 'Unpaid' },
+    { value: 'paid', label: 'Paid' },
+  ];
+
+  protected readonly title = computed(() => {
+    if (!this.isDetail) return 'Create Report';
+    const report = this.editor().report;
+    return report ? `${report.id} - ${report.name}` : (this.id ?? '');
+  });
+
+  /** Rows after search and status sort, each with its position in the full list ("Row N"). */
+  private readonly visibleRows = computed(() => {
+    this.rowsVersion();
+    const rows = this.form.controls.rows.controls.map((row, index) => ({ row, index }));
+    if (!this.isDetail) return rows;
+    const term = this.search().trim().toLowerCase();
+    const matches = term
+      ? rows.filter(({ row }) => {
+          const { vendor, lesseeName } = row.getRawValue();
+          return vendor.toLowerCase().includes(term) || lesseeName.toLowerCase().includes(term);
+        })
+      : rows;
+    const first = this.statusSort();
+    if (!first) return matches;
+    // "Sort by Status": the chosen status first, original order kept within each group.
+    const rank = ({ row }: { row: LeaseRowForm }) => (row.controls.paymentStatus.value === first ? 0 : 1);
+    return [...matches].sort((a, b) => rank(a) - rank(b) || a.index - b.index);
+  });
+
+  protected readonly pageCount = computed(() =>
+    this.isDetail ? Math.max(1, Math.ceil(this.visibleRows().length / ROWS_PER_PAGE)) : 1,
+  );
+  protected readonly pageRows = computed(() => {
+    if (!this.isDetail) return this.visibleRows();
+    const page = Math.min(this.page(), this.pageCount());
+    return this.visibleRows().slice((page - 1) * ROWS_PER_PAGE, page * ROWS_PER_PAGE);
+  });
+  protected readonly visibleCount = computed(() => this.visibleRows().length);
+
   protected readonly canSubmit = computed(() => {
     this.formVersion();
-    return this.form.valid && !this.editor().saving && !(this.isEdit && !this.editor().report);
+    if (this.editor().saving) return false;
+    // Update Report stays disabled until something changes (Figma 238:2740).
+    if (this.isDetail) return !!this.editor().report && this.form.dirty && this.form.valid;
+    return this.form.valid;
   });
-  private submitted = false;
 
   protected readonly listIds: LookupListIds = {
     buildingTypes: 'leasing-building-types',
@@ -66,17 +168,20 @@ export class LeasingEditor implements HasUnsavedChanges {
 
   constructor() {
     this.store.dispatch(leasingEditorActions.opened({ id: this.id }));
-    this.form.valueChanges
-      .pipe(takeUntilDestroyed(inject(DestroyRef)))
-      .subscribe(() => this.formVersion.update((v) => v + 1));
-    this.form.statusChanges
-      .pipe(takeUntilDestroyed(inject(DestroyRef)))
-      .subscribe(() => this.formVersion.update((v) => v + 1));
+    const destroyRef = inject(DestroyRef);
+    this.form.valueChanges.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => this.bump());
+    this.form.statusChanges.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => this.bump());
 
-    // Edit mode: fill the form once the report arrives.
+    // Detail page: fill the form once the report arrives.
     effect(() => {
       const report = this.editor().report;
-      if (report && this.isEdit) this.fill(report);
+      if (report && this.isDetail) this.fill(report);
+    });
+    // A new search or sort starts from the first page.
+    effect(() => {
+      this.search();
+      this.statusSort();
+      this.page.set(1);
     });
   }
 
@@ -98,16 +203,26 @@ export class LeasingEditor implements HasUnsavedChanges {
   protected addRow(): void {
     const row = createRowForm();
     this.rows.push(row);
+    this.form.markAsDirty();
+    this.rowsVersion.update((v) => v + 1);
     this.setExpanded(row, true);
-    this.focusRow(this.rows.length - 1);
+    if (this.isDetail) {
+      // Show the new row: clear the search and jump to the last page.
+      this.search.set('');
+      this.statusSort.set(null);
+      queueMicrotask(() => this.page.set(this.pageCount()));
+    }
+    this.focusRow(row);
   }
 
   protected duplicateRow(index: number): void {
     const copy = createRowForm();
     copy.setValue(this.rows.at(index).getRawValue());
     this.rows.insert(index + 1, copy);
+    this.form.markAsDirty();
+    this.rowsVersion.update((v) => v + 1);
     this.setExpanded(copy, true);
-    this.focusRow(index + 1);
+    this.focusRow(copy);
   }
 
   protected removeRow(index: number): void {
@@ -125,7 +240,22 @@ export class LeasingEditor implements HasUnsavedChanges {
         this.setExpanded(this.rows.at(index), false);
         this.rows.removeAt(index);
         this.form.markAsDirty();
+        this.rowsVersion.update((v) => v + 1);
       });
+  }
+
+  // Status sort: dropdown on desktop/tablet, bottom sheet on mobile (Figma 346:9670).
+  protected openSort(sheet: TemplateRef<unknown>): void {
+    this.statusSortDraft.setValue(this.statusSort());
+    if (this.isMobile()) this.sheetRef = this.bottomSheet.open(sheet, { ariaLabel: 'Sort by status' });
+    else this.sortOpen.set(true);
+  }
+
+  protected applySort(value: PaymentStatus | null): void {
+    this.statusSort.set(value);
+    this.sortOpen.set(false);
+    this.sheetRef?.close();
+    this.sheetRef = null;
   }
 
   protected submit(): void {
@@ -135,7 +265,7 @@ export class LeasingEditor implements HasUnsavedChanges {
       const next = new Set(this.expanded());
       this.rows.controls.filter((row) => row.invalid).forEach((row) => next.add(row));
       this.expanded.set(next);
-      this.formVersion.update((v) => v + 1);
+      this.bump();
       return;
     }
     const { name } = this.form.getRawValue();
@@ -148,17 +278,18 @@ export class LeasingEditor implements HasUnsavedChanges {
     );
   }
 
-  /** Discard button and the back arrow. The route guard asks if there are edits. */
+  /** Back arrow. The route guard asks if there are edits. */
   protected leave(): void {
-    this.router.navigateByUrl(this.isEdit ? `/leasing/${this.id}` : '/leasing');
+    this.router.navigateByUrl('/leasing');
   }
 
+  /** Discard (create) / Cancel (detail). */
   protected discard(): void {
     if (!this.form.dirty) {
       this.leave();
       return;
     }
-    confirmDiscard(this.confirmDialog).subscribe((leave) => {
+    confirmDiscard(this.confirmDialog, this.discardKind()).subscribe((leave) => {
       if (!leave) return;
       this.form.markAsPristine();
       this.leave();
@@ -171,10 +302,18 @@ export class LeasingEditor implements HasUnsavedChanges {
     return this.form.dirty;
   }
 
+  discardKind(): DiscardKind {
+    return this.isDetail ? 'edit' : 'create';
+  }
+
   protected nameError(): string | null {
     this.formVersion();
     const control = this.form.controls.name;
     return control.touched && control.invalid ? 'Report Name is required.' : null;
+  }
+
+  private bump(): void {
+    this.formVersion.update((v) => v + 1);
   }
 
   private fill(report: LeasingReportDetail): void {
@@ -183,13 +322,18 @@ export class LeasingEditor implements HasUnsavedChanges {
     this.form.controls.name.setValue(report.name);
     this.form.markAsPristine();
     this.expanded.set(new Set());
+    this.bump();
+    this.rowsVersion.update((v) => v + 1);
   }
 
-  private focusRow(index: number): void {
-    // After the new row renders, move focus to its first field.
+  private focusRow(row: LeaseRowForm): void {
+    // After the row renders, move focus to its first field.
     setTimeout(() => {
+      const index = this.pageRows().findIndex((item) => item.row === row);
       const rows = this.host.nativeElement.querySelectorAll('app-lease-row-form');
-      rows[index]?.querySelector<HTMLInputElement>('.body input')?.focus();
+      const target = rows[index];
+      target?.scrollIntoView?.({ block: 'nearest' });
+      target?.querySelector<HTMLInputElement>('.body input')?.focus();
     });
   }
 }

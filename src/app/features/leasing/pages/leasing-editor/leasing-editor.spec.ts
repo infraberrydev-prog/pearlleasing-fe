@@ -148,16 +148,113 @@ describe('LeasingEditor', () => {
     expect(s.navigate).toHaveBeenCalledWith('/leasing');
   });
 
-  it('fills the form in edit mode', () => {
-    const s = setup('RP1');
-    expect(s.dispatch).toHaveBeenCalledWith(leasingEditorActions.opened({ id: 'RP1' }));
+});
+
+describe('LeasingEditor detail page (Unpaid → Paid)', () => {
+  afterEach(() => document.querySelector('.cdk-overlay-container')?.replaceChildren());
+
+  function open(report: LeasingReportDetail = REPORT) {
+    const s = setup(report.id);
     s.store.setState({
-      leasing: { ...initialLeasingState, lookups: LOOKUPS, editor: { report: REPORT, loading: false, saving: false, error: null } },
+      leasing: {
+        ...initialLeasingState,
+        lookups: LOOKUPS,
+        editor: { report, loading: false, saving: false, error: null },
+      },
     });
     s.fixture.detectChanges();
-    expect(s.el.querySelector('h1')!.textContent).toBe('Edit Report');
+    return s;
+  }
+
+  const many = (count: number): LeasingReportDetail => ({
+    ...REPORT,
+    rows: Array.from({ length: count }, (_, i) => ({
+      ...REPORT.rows[0],
+      lesseeName: `Lessee ${i + 1}`,
+      paymentStatus: i % 3 === 0 ? 'unpaid' : 'paid',
+    })),
+  });
+
+  it('shows the report with status chips and Update Report disabled until a change', () => {
+    const s = open();
+    expect(s.dispatch).toHaveBeenCalledWith(leasingEditorActions.opened({ id: 'RP1' }));
+    expect(s.el.querySelector('h1')!.textContent).toBe('RP1 - Report for Month of January');
     expect(s.el.querySelector<HTMLInputElement>('.report-name input')!.value).toBe('Report for Month of January');
-    expect(s.el.querySelector('.summary')!.textContent).toContain('Total Amount: ₱ 3,500.00');
-    expect(s.button('Save Changes').disabled).toBe(false);
+    expect(s.el.querySelector('app-lease-row-form app-chip')!.textContent?.trim()).toBe('Unpaid');
+    expect(s.el.querySelector('.tools')).toBeNull();
+    expect(s.button('Update Report').disabled).toBe(true);
+  });
+
+  it('marks a row as paid and submits the update', () => {
+    const s = open();
+    s.el.querySelector<HTMLButtonElement>('app-lease-row-form .toggle')!.click();
+    s.fixture.detectChanges();
+    s.type('select', 'paid', s.field('Payment Status'));
+    s.fixture.detectChanges();
+
+    expect(s.el.querySelector('app-lease-row-form app-chip')!.textContent?.trim()).toBe('Paid');
+    expect(s.button('Update Report').disabled).toBe(false);
+    s.button('Update Report').click();
+
+    const action = s.dispatch.mock.calls
+      .map(([a]) => a as unknown as Action)
+      .find((a) => a.type === leasingEditorActions.submitted.type);
+    expect(action).toMatchObject({
+      id: 'RP1',
+      draft: { rows: [{ paymentStatus: 'paid', lesseeName: 'John Martial' }] },
+    });
+  });
+
+  it('pages rows ten at a time and counts them', () => {
+    const s = open(many(23));
+    expect(s.el.querySelectorAll('app-lease-row-form').length).toBe(10);
+    expect(s.el.querySelector('.row-count')!.textContent).toContain('Total rows: 23');
+    s.button('3').click();
+    s.fixture.detectChanges();
+    const rows = s.el.querySelectorAll('app-lease-row-form .summary');
+    expect(rows.length).toBe(3);
+    expect(rows[0].textContent).toContain('Row 21 -');
+  });
+
+  it('searches by lessee name', () => {
+    const s = open(many(23));
+    const search = s.el.querySelector<HTMLInputElement>('.search input')!;
+    search.value = 'lessee 2';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    s.fixture.detectChanges();
+    // "Lessee 2" and "Lessee 20" to "Lessee 23"
+    expect(s.el.querySelector('.row-count')!.textContent).toContain('Total rows: 5');
+  });
+
+  it('sorts unpaid rows first', () => {
+    const s = open(many(6));
+    s.button('Sort').click();
+    s.fixture.detectChanges();
+    const pane = document.querySelector('.cdk-overlay-pane')!;
+    pane.querySelector<HTMLInputElement>('input[type=radio]')!.click();
+    Array.from(pane.querySelectorAll<HTMLButtonElement>('button'))
+      .find((b) => b.textContent?.trim() === 'Apply')!
+      .click();
+    s.fixture.detectChanges();
+    const chips = () =>
+      Array.from(s.el.querySelectorAll('app-lease-row-form app-chip')).map((c) => c.textContent?.trim());
+    expect(chips()).toEqual(['Unpaid', 'Unpaid', 'Paid', 'Paid', 'Paid', 'Paid']);
+
+    // Marking the first row Paid keeps it in place while editing.
+    s.el.querySelector<HTMLButtonElement>('app-lease-row-form .toggle')!.click();
+    s.fixture.detectChanges();
+    s.type('select', 'paid', s.field('Payment Status'));
+    s.fixture.detectChanges();
+    expect(chips()[0]).toBe('Paid');
+    expect(s.el.querySelector('app-lease-row-form .summary')!.textContent).toContain('Row 1 -');
+  });
+
+  it('asks before cancelling an edit', () => {
+    const s = open();
+    s.type('input', 'Renamed report', s.field('Report Name'));
+    s.fixture.detectChanges();
+    s.button('Cancel').click();
+    TestBed.tick();
+    expect(document.querySelector('.cdk-overlay-pane h2')!.textContent).toContain('cancel edit');
   });
 });

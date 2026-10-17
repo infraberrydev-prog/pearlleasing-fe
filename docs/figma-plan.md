@@ -416,6 +416,27 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - Not in Figma: the delete-row confirmation, validation messages, the "Edit Report" / "Save Changes" / "Report successfully updated!" wording, and the tablet/mobile layouts (built from the desktop design).
 - Figma's footer spans the page outside the card; here it sits at the bottom of the card, sticky.
 
+**Step 8 done (2026-10-17).** Leasing report detail and the Unpaid → Paid flow at `/leasing/:id`. Built from user-provided screenshots (`docs/screens/detail.png`, `unpaid-to-paid.png`, `status-filter.png`, `detail-mobile.png.png`) of 238:2740, 311:4004 and 346:9670 because Figma was rate-limited.
+- The detail page is the step 7 form in "detail" mode (`LeasingEditor`, `isDetail`):
+  - title "RP25201 - Report for Month of …"
+  - rows with Unpaid / Paid chips and no edit/duplicate/delete buttons
+  - "Search vendor or lessee name", and **Sort** (Unpaid / Paid first, Clear | Apply) as a dropdown on desktop/tablet and a sheet on mobile
+  - ten rows per page with "Total rows: N"
+  - "+ Add Row"
+  - Cancel + **Update Report**, disabled until something changes
+  - mobile: left-aligned title; footer stacked with Update Report on top
+- Unpaid → Paid: expand a row, set Payment Status to Paid (its chip turns green right away), then Update Report → back to the list with "Report successfully updated!".
+- While editing, rows keep their place. Search and sort re-apply only when they change or rows are added or removed, so a row doesn't jump away when switched to Paid.
+- Cancel / back / leaving with edits asks "Are you sure you want to cancel edit?" (Figma 318:3801). The guard picks the create or edit wording.
+- `/leasing/:id/edit` now redirects to `/leasing/:id`; the placeholder page is gone. Some mock reports have 23 rows so paging can be tried.
+
+**Step 8 gaps:**
+- Figma calls the status control "Sort" (section "Sort by Status"). It's built as a sort (the chosen status first). If the client meant a filter (show only that status), it's a small change.
+- The cancel-edit dialog body is placeholder "Text" in Figma; the wording is mine.
+- Not in Figma: "Report successfully updated!", the "No rows match your search." message, and the dot marking an active sort.
+- Figma's "Total rows" figure (55) doesn't match its 10-page pagination; here it is the number of rows matching the search.
+- The old view-report modal with a file preview (99:2494, "Name of file / 1 / 100%") looks superseded by the detail page and isn't built. Confirm whether file attachments are needed.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

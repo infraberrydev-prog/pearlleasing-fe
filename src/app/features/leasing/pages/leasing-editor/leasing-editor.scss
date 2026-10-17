@@ -46,7 +46,61 @@
 .title {
   @include type.text(md, semibold);
   margin: 0;
+  overflow: hidden;
   color: var(--color-text-default);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Mobile (Figma detail-mobile): title left-aligned next to the back arrow.
+@include bp.mobile {
+  .top-bar {
+    justify-content: flex-start;
+    padding: 0 var(--spacing-xl) 0 56px;
+  }
+
+  .back {
+    left: var(--spacing-md);
+  }
+}
+
+// Detail toolbar: 370px search + Sort (Figma 238:2740); stacked on mobile.
+.toolbar {
+  display: flex;
+  gap: var(--spacing-md);
+
+  .search {
+    width: 370px;
+  }
+
+  @include bp.mobile {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .search {
+      width: 100%;
+    }
+  }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circle);
+  background: var(--color-brand);
+}
+
+.no-rows {
+  @include type.text(md);
+  margin: var(--spacing-3xl) 0;
+  color: var(--color-text-subtler);
+  text-align: center;
+}
+
+.row-count {
+  @include type.text(sm);
+  margin: 0;
+  color: var(--color-text-subtle);
 }
 
 .content {
@@ -96,13 +150,14 @@
   border-top: 1px solid var(--color-border-subtle);
   border-radius: 0 0 var(--radius-sm) var(--radius-sm);
 
-  // Above the mobile bottom navigation.
+  // Mobile (Figma detail-mobile): stacked, primary on top, above the bottom navigation.
   @include bp.mobile {
     bottom: 68px;
+    flex-direction: column-reverse;
     padding: var(--spacing-xl);
 
     > button {
-      flex: 1 1 0;
+      width: 100%;
     }
   }
 }

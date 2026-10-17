@@ -65,7 +65,8 @@ function seed(): LeasingReportDetail[] {
     return {
       id: `RP${25200 + i}`,
       name: `Report for Month of ${MONTHS[month]}${year === 2024 ? ' 2024' : ''}`,
-      rows: Array.from({ length: 1 + (i % 4) }, (_, r) => sampleRow(i * 5 + r)),
+      // A few large reports so the detail page has several pages of rows.
+      rows: Array.from({ length: i % 5 === 1 ? 23 : 1 + (i % 4) }, (_, r) => sampleRow(i * 5 + r)),
       createdAt: created.toISOString(),
       updatedAt: updated?.toISOString() ?? null,
     };

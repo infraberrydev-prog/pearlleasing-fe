@@ -27,17 +27,14 @@ export const leasingRoutes: Routes = [
         canDeactivate: [unsavedChangesGuard],
         loadComponent: () => import('./pages/leasing-editor/leasing-editor').then((m) => m.LeasingEditor),
       },
-      {
-        path: ':id/edit',
-        title: 'Edit Report · Pearl Place',
-        canDeactivate: [unsavedChangesGuard],
-        loadComponent: () => import('./pages/leasing-editor/leasing-editor').then((m) => m.LeasingEditor),
-      },
+      // Detail page: view rows and update them, e.g. Unpaid → Paid (Figma 315:6423).
       {
         path: ':id',
         title: 'Report · Pearl Place',
-        loadComponent: () => import('./pages/leasing-placeholder').then((m) => m.LeasingPlaceholder),
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () => import('./pages/leasing-editor/leasing-editor').then((m) => m.LeasingEditor),
       },
+      { path: ':id/edit', redirectTo: ':id' },
     ],
   },
 ];

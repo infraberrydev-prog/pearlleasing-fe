@@ -41,6 +41,10 @@
   }
 }
 
+.status {
+  flex-shrink: 0;
+}
+
 .summary {
   overflow: hidden;
   text-overflow: ellipsis;

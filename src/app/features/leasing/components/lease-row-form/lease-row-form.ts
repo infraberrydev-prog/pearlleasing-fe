@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, booleanAttribute, input, model, output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { formatPeso } from '../../../../shared/pipes/format.pipes';
-import { Icon, InputField, SelectField, SelectOption } from '../../../../shared/ui';
+import { Chip, Icon, InputField, SelectField, SelectOption } from '../../../../shared/ui';
 import { LeasingLookups } from '../../models/leasing-report';
 import { LeaseRowForm, fieldError, totalOf } from './lease-row.form';
 
@@ -25,7 +25,7 @@ export interface LookupListIds {
  */
 @Component({
   selector: 'app-lease-row-form',
-  imports: [ReactiveFormsModule, Icon, InputField, SelectField],
+  imports: [ReactiveFormsModule, Chip, Icon, InputField, SelectField],
   templateUrl: './lease-row-form.html',
   styleUrl: './lease-row-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +39,10 @@ export class LeaseRowFormComponent {
   readonly listIds = input.required<LookupListIds>();
   readonly expanded = model(false);
   readonly canRemove = input(true, { transform: booleanAttribute });
+  /** Edit / duplicate / delete buttons (create form). The detail page hides them. */
+  readonly showTools = input(true, { transform: booleanAttribute });
+  /** Unpaid / Paid chip before the row label (detail page, Figma 238:2740). */
+  readonly showStatus = input(false, { transform: booleanAttribute });
   readonly duplicate = output<void>();
   readonly remove = output<void>();
 
@@ -57,6 +61,12 @@ export class LeaseRowFormComponent {
       part(v.lesseeName, 'Lessee Name'),
       `Total Amount: ${this.total()}`,
     ].join(' / ');
+  }
+
+  /** Follows the Payment Status field live, so Unpaid → Paid shows at once. */
+  protected status(): 'unpaid' | 'paid' | null {
+    const value = this.form().controls.paymentStatus.value;
+    return value === 'paid' || value === 'unpaid' ? value : null;
   }
 
   protected total(): string {
