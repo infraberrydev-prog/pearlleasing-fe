@@ -1,0 +1,101 @@
+<div class="header">
+  <button
+    type="button"
+    class="toggle"
+    [attr.aria-expanded]="expanded()"
+    [attr.aria-controls]="'lease-row-' + index()"
+    (click)="expanded.set(!expanded())"
+  >
+    <app-icon [name]="expanded() ? 'chevron-down' : 'chevron-right'" />
+    <span class="summary">
+      <span class="row-label">Row {{ index() + 1 }} -</span>
+      {{ summary() }}
+    </span>
+  </button>
+  <div class="tools">
+    <button type="button" class="tool" [attr.aria-label]="'Edit row ' + (index() + 1)" (click)="expanded.set(true)">
+      <!-- Exported cropped to 15×15 (no padding), so drawn at 15px to match the 20px copy icon. -->
+      <app-icon name="pencil-02" [size]="15">✎</app-icon>
+    </button>
+    <button type="button" class="tool" [attr.aria-label]="'Duplicate row ' + (index() + 1)" (click)="duplicate.emit()">
+      <app-icon name="copy-01" [size]="20">⧉</app-icon>
+    </button>
+    <button
+      type="button"
+      class="tool"
+      [disabled]="!canRemove()"
+      [attr.aria-label]="'Delete row ' + (index() + 1)"
+      (click)="remove.emit()"
+    >
+      <app-icon name="trash-03" [size]="20" />
+    </button>
+  </div>
+</div>
+
+@if (expanded()) {
+  <div class="body" [id]="'lease-row-' + index()" [formGroup]="form()">
+    <fieldset class="section">
+      <legend>Lessee Information</legend>
+      <div class="grid">
+        <app-input-field class="third" label="Building Type" required placeholder="Search building type"
+          formControlName="buildingType" [list]="listIds().buildingTypes" [error]="error('buildingType', 'Building Type')">
+          <app-icon trailing name="search-01" />
+        </app-input-field>
+        <app-input-field class="third" label="Vendor Name / Category" required placeholder="Search vendor name or category"
+          formControlName="vendor" [list]="listIds().vendors" [error]="error('vendor', 'Vendor name or category')">
+          <app-icon trailing name="search-01" />
+        </app-input-field>
+        <app-input-field class="third" label="Stall / Unit" required placeholder="Search stall or unit"
+          formControlName="stall" [list]="listIds().stalls" [error]="error('stall', 'Stall / Unit')">
+          <app-icon trailing name="search-01" />
+        </app-input-field>
+        <app-input-field class="third" label="Name of Lessee" required placeholder="Enter name"
+          formControlName="lesseeName" [error]="error('lesseeName', 'Name of Lessee')" />
+        <app-input-field class="third" label="Mobile Number" optional type="tel" placeholder="Enter mobile number"
+          formControlName="mobileNumber" [error]="error('mobileNumber', 'Mobile Number')" />
+        <app-input-field class="third" label="TIN No." optional placeholder="Enter TIN" formControlName="tin" />
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend>Rental Payment</legend>
+      <div class="grid">
+        <app-input-field class="half" label="Monthly Rental" required placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="monthlyRental" [error]="error('monthlyRental', 'Monthly Rental')" />
+        <app-select-field class="half" label="Payment Status" required placeholder="Select status"
+          [options]="statusOptions" formControlName="paymentStatus" [error]="error('paymentStatus', 'Payment Status')" />
+        <app-select-field class="half" label="Payment Method" required placeholder="Select payment method"
+          [options]="paymentMethodOptions()" formControlName="paymentMethod"
+          [error]="error('paymentMethod', 'Payment Method')" />
+        <app-input-field class="half" label="Reference Number" required placeholder="Enter reference number"
+          formControlName="referenceNumber" [error]="error('referenceNumber', 'Reference Number')" />
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend>Utilities</legend>
+      <div class="grid">
+        <app-input-field class="third" label="Electricity" required placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="electricity" [error]="error('electricity', 'Electricity')" />
+        <app-input-field class="third" label="Water" required placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="water" [error]="error('water', 'Water')" />
+        <app-input-field class="third" label="Other Utilities" required placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="otherUtilities" [error]="error('otherUtilities', 'Other Utilities')" />
+        <app-input-field class="half" label="CUSA Fee" optional placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="cusaFee" [error]="error('cusaFee', 'CUSA Fee')" />
+        <app-input-field class="half" label="Pylon Rental" optional placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="pylonRental" [error]="error('pylonRental', 'Pylon Rental')" />
+      </div>
+    </fieldset>
+
+    <fieldset class="section">
+      <legend>Deductions</legend>
+      <div class="grid">
+        <app-input-field class="half" label="10% Penalty" optional placeholder="₱ 00.00" inputmode="decimal"
+          formControlName="penalty" [error]="error('penalty', '10% Penalty')" />
+      </div>
+    </fieldset>
+
+    <div class="total" aria-live="polite">Total Amount: {{ total() }}</div>
+  </div>
+}

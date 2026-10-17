@@ -21,3 +21,4 @@ export * from './panel/dropdown-panel';
 export * from './panel/panel-section';
 export * from './radio/radio';
 export * from './radio/radio-group';
+export * from './select-field/select-field';

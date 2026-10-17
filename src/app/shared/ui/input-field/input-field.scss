@@ -20,6 +20,15 @@
   color: var(--color-text-default);
 }
 
+.required {
+  color: var(--color-text-danger);
+}
+
+.optional {
+  font-style: italic;
+  font-weight: var(--font-weight-regular);
+}
+
 .control {
   display: flex;
   align-items: center;

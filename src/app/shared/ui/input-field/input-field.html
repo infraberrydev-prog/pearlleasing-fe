@@ -1,6 +1,13 @@
 @if (label()) {
   <div class="label-row">
-    <label class="label" [for]="inputId()">{{ label() }}</label>
+    <label class="label" [for]="inputId()">
+      {{ label() }}
+      @if (required()) {
+        <span class="required" aria-hidden="true">*</span>
+      } @else if (optional()) {
+        <em class="optional">(optional)</em>
+      }
+    </label>
     <ng-content select="[labelAction]" />
   </div>
 }
@@ -17,6 +24,8 @@
     [disabled]="isDisabled()"
     [required]="required()"
     [attr.autocomplete]="autocomplete()"
+    [attr.list]="list() ?? null"
+    [attr.inputmode]="inputmode() ?? null"
     [attr.aria-invalid]="invalid()"
     [attr.aria-describedby]="describedBy()"
     (input)="handleInput($event)"

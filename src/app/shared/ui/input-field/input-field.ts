@@ -44,7 +44,13 @@ export class InputField implements ControlValueAccessor {
   readonly hint = input<string>();
   /** Error message. Shows the danger border and replaces the hint. */
   readonly error = input<string | null>();
+  /** Marks the label with a red asterisk (Figma "Report Name *"). */
   readonly required = input(false, { transform: booleanAttribute });
+  /** Appends an italic "(optional)" to the label (Figma "Mobile Number (optional)"). */
+  readonly optional = input(false, { transform: booleanAttribute });
+  /** Id of a <datalist> with suggestions (searchable fields). */
+  readonly list = input<string>();
+  readonly inputmode = input<string>();
   readonly inputId = input(`app-input-${nextId++}`);
 
   protected readonly value = signal('');

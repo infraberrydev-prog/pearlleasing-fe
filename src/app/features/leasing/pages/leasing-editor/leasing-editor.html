@@ -1,0 +1,75 @@
+<form class="card" [formGroup]="form" (submit)="$event.preventDefault(); submit()" novalidate>
+  <header class="top-bar">
+    <button type="button" class="back" aria-label="Back" (click)="leave()">
+      <app-icon name="chevron-left" />
+    </button>
+    <h1 class="title">{{ isEdit ? 'Edit Report' : 'Create Report' }}</h1>
+  </header>
+
+  <div class="content">
+    @if (editor().error; as error) {
+      <app-alert tone="error">{{ error }}</app-alert>
+    }
+
+    @if (isEdit && editor().loading) {
+      <p class="loading" role="status">Loading report…</p>
+    } @else {
+      <p class="intro">Provide the necessary details to complete this report.</p>
+
+      <app-input-field
+        class="report-name"
+        label="Report Name"
+        required
+        placeholder="Enter Report name"
+        formControlName="name"
+        [error]="nameError()"
+      />
+
+      <app-divider />
+
+      <div class="rows">
+        @for (row of rows.controls; track row; let i = $index) {
+          <app-lease-row-form
+            [form]="row"
+            [index]="i"
+            [lookups]="lookups()"
+            [listIds]="listIds"
+            [canRemove]="rows.length > 1"
+            [expanded]="isExpanded(row)"
+            (expandedChange)="setExpanded(row, $event)"
+            (duplicate)="duplicateRow(i)"
+            (remove)="removeRow(i)"
+          />
+        }
+      </div>
+
+      <button app-button type="button" variant="secondary" block class="add-row" (click)="addRow()">
+        <app-icon name="plus-02-inverse" tint />Add Row
+      </button>
+    }
+  </div>
+
+  <footer class="footer">
+    <button app-button type="button" variant="danger-subtle" (click)="discard()">Discard</button>
+    <button app-button type="submit" [disabled]="!canSubmit()" [attr.aria-busy]="editor().saving">
+      {{ isEdit ? 'Save Changes' : 'Submit Report' }}
+    </button>
+  </footer>
+</form>
+
+<!-- Suggestions for the searchable fields, shared by every row. -->
+<datalist [id]="listIds.buildingTypes">
+  @for (option of lookups()?.buildingTypes ?? []; track option) {
+    <option [value]="option"></option>
+  }
+</datalist>
+<datalist [id]="listIds.vendors">
+  @for (option of lookups()?.vendors ?? []; track option) {
+    <option [value]="option"></option>
+  }
+</datalist>
+<datalist [id]="listIds.stalls">
+  @for (option of lookups()?.stalls ?? []; track option) {
+    <option [value]="option"></option>
+  }
+</datalist>

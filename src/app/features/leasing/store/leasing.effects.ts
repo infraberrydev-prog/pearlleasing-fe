@@ -1,10 +1,11 @@
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, exhaustMap, filter, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { saveFile } from '../../../shared/utils/save-file';
 import { LeasingApi } from '../data/leasing-api';
-import { leasingApiActions, leasingListActions } from './leasing.actions';
+import { leasingApiActions, leasingEditorActions, leasingListActions } from './leasing.actions';
 import { leasingFeature } from './leasing.feature';
 
 const message = (error: unknown) => (error instanceof Error ? error.message : 'Something went wrong.');
@@ -64,4 +65,54 @@ export const download$ = createEffect(
       ),
     ),
   { functional: true },
+);
+
+export const loadDetail$ = createEffect(
+  (actions$ = inject(Actions), api = inject(LeasingApi)) =>
+    actions$.pipe(
+      ofType(leasingEditorActions.opened),
+      switchMap(({ id }) =>
+        id === null
+          ? EMPTY
+          : api.get(id).pipe(
+              map((report) => leasingApiActions.detailLoaded({ report })),
+              catchError((error) => of(leasingApiActions.detailLoadFailed({ error: message(error) }))),
+            ),
+      ),
+    ),
+  { functional: true },
+);
+
+export const loadLookups$ = createEffect(
+  (actions$ = inject(Actions), api = inject(LeasingApi), store = inject(Store)) =>
+    actions$.pipe(
+      ofType(leasingEditorActions.opened),
+      filter(() => store.selectSignal(leasingFeature.selectLookups)() === null),
+      switchMap(() => api.lookups().pipe(map((lookups) => leasingApiActions.lookupsLoaded({ lookups })))),
+    ),
+  { functional: true },
+);
+
+export const save$ = createEffect(
+  (actions$ = inject(Actions), api = inject(LeasingApi)) =>
+    actions$.pipe(
+      ofType(leasingEditorActions.submitted),
+      exhaustMap(({ id, draft }) =>
+        (id === null ? api.create(draft) : api.update(id, draft)).pipe(
+          map((report) => leasingApiActions.saved({ report, created: id === null })),
+          catchError((error) => of(leasingApiActions.saveFailed({ error: message(error) }))),
+        ),
+      ),
+    ),
+  { functional: true },
+);
+
+/** Back to the list, which shows the success notice. */
+export const afterSave$ = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) =>
+    actions$.pipe(
+      ofType(leasingApiActions.saved),
+      tap(() => router.navigateByUrl('/leasing')),
+    ),
+  { functional: true, dispatch: false },
 );

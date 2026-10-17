@@ -1,0 +1,76 @@
+@use 'typography' as type;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.label {
+  @include type.text(sm, medium);
+  color: var(--color-text-default);
+}
+
+.required {
+  color: var(--color-text-danger);
+}
+
+.optional {
+  font-style: italic;
+  font-weight: var(--font-weight-regular);
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  app-icon {
+    position: absolute;
+    right: var(--spacing-xl);
+    pointer-events: none;
+  }
+}
+
+select {
+  @include type.text(md);
+  width: 100%;
+  appearance: none;
+  padding: var(--spacing-lg) 48px var(--spacing-lg) var(--spacing-xl);
+  background: var(--color-bg-input);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-subtle);
+  cursor: pointer;
+
+  &.is-empty {
+    color: var(--color-text-disabled);
+  }
+
+  &:focus {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 1px var(--color-brand);
+    outline: none;
+  }
+
+  option {
+    color: var(--color-text-default);
+  }
+}
+
+:host(.is-invalid) select {
+  border-color: var(--color-border-danger);
+}
+
+:host(.is-disabled) select {
+  background: var(--color-bg-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.error {
+  @include type.text(sm);
+  margin: 0;
+  color: var(--color-text-danger);
+}

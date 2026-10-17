@@ -390,6 +390,32 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - The "Last Updated" filter options aren't in Figma; I used All / Updated / Not yet updated.
 - Not in Figma: Create Report on tablet (its button group is hidden there), pagination on tablet, the dot marking an applied sort/filter, and the loading text.
 
+**Step 7 done (2026-10-17).** Leasing create/edit form at `/leasing/new` and `/leasing/:id/edit`. Figma was rate-limited, so the form follows the user-provided screenshot of 315:6937 (`docs/screens/create-filled.png`).
+- `features/leasing/models/leasing-report.ts`: `LeaseRow`, `LeasingReportDraft/Detail`, `rowTotal` = monthly rental + utilities (Electricity, Water, Other Utilities, CUSA Fee, Pylon Rental) − deductions (10% Penalty), and `reportTotal`.
+- `components/lease-row-form/`:
+  - The accordion row: the header "Row N - Building / Vendor / Lessee / Total Amount", plus edit, duplicate and delete buttons.
+  - Four sections laid out like Figma (3 across / 2 across on desktop, 2 columns on tablet, 1 on mobile).
+  - Required `*` and italic "(optional)" labels; Building Type, Vendor and Stall are search fields with suggestions.
+  - Payment Status and Payment Method are dropdowns.
+  - A live row total.
+  - `lease-row.form.ts` has the typed form, validation (required, amounts like "1,500.00", mobile number) and form↔row conversion.
+- `pages/leasing-editor/`:
+  - A card with a back arrow and a centred title, Report Name, the rows and "+ Add Row".
+  - A sticky footer with Discard and Submit Report; Submit is disabled until the form is valid.
+  - Delete-row confirmation.
+  - Discard asks with the Figma dialog (317:3155); a route guard asks the same when leaving with unsaved edits (the X/Escape keeps you on the page).
+  - Edit mode loads the report and shows "Edit Report" / "Save Changes".
+- Store: editor state, lookups and save effects. After a save the app returns to the list, which shows the Figma success toast (69:1655) "Report successfully submitted!" and closes it after 5s.
+- Mock API now keeps full reports with rows. The list's Expected Revenue is the sum of row totals.
+- Shared additions: `select-field`; `input-field` gained `required` (red *), `optional`, `list` (datalist) and `inputmode`; `ConfirmDialogService.ask()` tells cancel from dismiss; `unsavedChangesGuard`.
+
+**Step 7 gaps:**
+- To confirm with the client: the 10% Penalty sits under "Deductions" in Figma, so it is **subtracted**.
+- Choices not in Figma: Payment Method options (Cash, Bank Transfer, GCash, Check) and the building/vendor/stall suggestions (sample data until an API exists).
+- Edit/duplicate icons are in place (`pencil-02.svg`, `copy-01.svg`, exported by hand from 315:6984 / 315:6985). The pencil was exported cropped to 15×15, so it is drawn at 15px next to the 20px copy and trash icons.
+- Not in Figma: the delete-row confirmation, validation messages, the "Edit Report" / "Save Changes" / "Report successfully updated!" wording, and the tablet/mobile layouts (built from the desktop design).
+- Figma's footer spans the page outside the card; here it sits at the bottom of the card, sticky.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

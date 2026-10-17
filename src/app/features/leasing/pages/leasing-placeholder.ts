@@ -5,14 +5,15 @@ import { map } from 'rxjs';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { PagePlaceholder } from '../../../layout/page-placeholder/page-placeholder';
 
-/** Stand-in for Create (step 7) and View (step 8) so the list's links lead somewhere. */
+/** Stand-in for View (step 8) so the list's links lead somewhere. */
 @Component({
   selector: 'app-leasing-placeholder',
   imports: [PageHeader, PagePlaceholder, RouterLink],
   template: `
-    <app-page-header [title]="id() ? 'Report ' + id() : 'Create Report'" />
+    <app-page-header [title]="'Report ' + id()" />
     <app-page-placeholder>
-      {{ id() ? 'Viewing a report arrives in step 8.' : 'Creating a report arrives in step 7.' }}
+      Viewing a report arrives in step 8.
+      <a [routerLink]="['/leasing', id(), 'edit']">Edit this report</a> ·
       <a routerLink="/leasing">Back to Leasing Reports</a>
     </app-page-placeholder>
   `,

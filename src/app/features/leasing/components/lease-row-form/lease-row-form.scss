@@ -1,0 +1,149 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+@use 'mixins';
+
+// Row card: border/subtle, 8px radius (Figma 315:6937, read from the screenshot).
+:host {
+  display: block;
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+:host(.has-errors) {
+  border-color: var(--color-border-danger);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+:host(.is-expanded) .header {
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.toggle {
+  @include mixins.reset-button;
+  @include type.text(md, semibold);
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 0;
+  color: var(--color-text-default);
+  text-align: left;
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-label {
+  margin-right: var(--spacing-sm);
+}
+
+.tools {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--spacing-md);
+}
+
+// 36×36 bordered icon buttons.
+.tool {
+  @include mixins.reset-button;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  color: var(--color-icon-subtle);
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-xl) var(--spacing-3xl) var(--spacing-3xl);
+
+  @include bp.mobile {
+    padding: var(--spacing-xl);
+  }
+}
+
+.section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    @include type.text(md, semibold);
+    margin-bottom: var(--spacing-sm);
+    padding: 0;
+    color: var(--color-text-default);
+  }
+}
+
+// Desktop: three across or two across, per the Figma rows.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--spacing-xl) var(--spacing-md);
+
+  .third {
+    grid-column: span 2;
+  }
+
+  .half {
+    grid-column: span 3;
+  }
+
+  @include bp.tablet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .third,
+    .half {
+      grid-column: span 1;
+    }
+  }
+
+  @include bp.mobile {
+    grid-template-columns: minmax(0, 1fr);
+
+    .third,
+    .half {
+      grid-column: span 1;
+    }
+  }
+}
+
+.total {
+  @include type.text(md, bold);
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-default);
+  text-align: right;
+}

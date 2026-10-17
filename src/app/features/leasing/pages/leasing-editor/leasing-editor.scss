@@ -1,0 +1,108 @@
+@use 'typography' as type;
+@use 'breakpoints' as bp;
+@use 'mixins';
+
+:host {
+  display: block;
+}
+
+// Figma 315:6937: one white card holding the top bar, the form and Add Row.
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-default);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+// Top bar: back arrow on the left, title centred, divider below.
+.top-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 0 64px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.back {
+  @include mixins.reset-button;
+  position: absolute;
+  left: var(--spacing-xl);
+  display: inline-flex;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background: var(--color-bg-hovered);
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring;
+  }
+}
+
+.title {
+  @include type.text(md, semibold);
+  margin: 0;
+  color: var(--color-text-default);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xl);
+  padding: var(--spacing-3xl);
+
+  @include bp.mobile {
+    padding: var(--spacing-xl);
+  }
+}
+
+.intro {
+  @include type.text(sm);
+  margin: 0;
+  color: var(--color-text-subtle);
+}
+
+.loading {
+  @include type.text(md);
+  margin: 48px auto;
+  color: var(--color-text-subtler);
+}
+
+// Figma: 370px wide.
+.report-name {
+  max-width: 370px;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+// Footer: Discard + Submit Report, right-aligned, stuck to the bottom of the screen.
+.footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl) var(--spacing-3xl);
+  background: var(--color-bg-default);
+  border-top: 1px solid var(--color-border-subtle);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+
+  // Above the mobile bottom navigation.
+  @include bp.mobile {
+    bottom: 68px;
+    padding: var(--spacing-xl);
+
+    > button {
+      flex: 1 1 0;
+    }
+  }
+}

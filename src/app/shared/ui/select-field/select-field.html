@@ -1,0 +1,33 @@
+@if (label()) {
+  <label class="label" [for]="selectId()">
+    {{ label() }}
+    @if (required()) {
+      <span class="required" aria-hidden="true">*</span>
+    } @else if (optional()) {
+      <em class="optional">(optional)</em>
+    }
+  </label>
+}
+
+<div class="control">
+  <select
+    [id]="selectId()"
+    [class.is-empty]="isEmpty()"
+    [disabled]="isDisabled()"
+    [required]="required()"
+    [attr.aria-invalid]="!!error()"
+    [attr.aria-describedby]="error() ? selectId() + '-desc' : null"
+    (change)="handleChange($event)"
+    (blur)="onTouched()"
+  >
+    <option value="" disabled [selected]="isEmpty()">{{ placeholder() }}</option>
+    @for (option of options(); track option.value) {
+      <option [value]="option.value" [selected]="option.value === value()">{{ option.label }}</option>
+    }
+  </select>
+  <app-icon name="chevron-down" />
+</div>
+
+@if (error()) {
+  <p class="error" [id]="selectId() + '-desc'">{{ error() }}</p>
+}
