@@ -47,7 +47,7 @@ input {
   color: var(--color-text-subtle);
 
   &::placeholder {
-    color: var(--color-text-subtler);
+    color: var(--color-text-disabled);
   }
 }
 

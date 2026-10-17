@@ -350,6 +350,9 @@ Each step ships desktop, tablet and mobile together, so responsiveness isn't lef
 - Unconfirmed against Figma: sidebar and bottom-nav colors, active/hover states and the label type style; the page background (white is used); the bottom nav tab set and labels.
 - The logout dialog body text is a placeholder ("Text") in Figma; I used "You will need to log in again to access your reports." Button styles (Cancel secondary, Log out primary) are inferred.
 
+**Steps 3–4 re-checked against Figma (2026-10-17)**, once access returned. Fixed: input placeholders and their color, the countdown style, mobile auth layout and code boxes, the shield tile on mobile, sidebar/bottom-nav/More styling, the backdrops, the logout dialog's copy and danger style, and the stacked dialog on tablet/mobile. Icons were replaced with the exact Figma exports; navigation icons are tinted by state.
+- Still open: the Figma Expenses nav icon differs between the rail and bottom nav (`bank-note-01`) and the expanded panel (`file-lock-02`); `bank-note-01` is used everywhere. The 2FA action spacing is 24px in two frames and 16px in one; 24px is used. Filled mobile code digits aren't drawn, so 28px is used. Tablet sort/filter is still undesigned.
+
 ## 5. Open questions for the designer or client
 
 1. **Forgot password:** there's a link but no flow. Out of scope, or are screens still to come?

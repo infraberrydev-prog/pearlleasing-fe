@@ -18,7 +18,7 @@
   }
 }
 
-// Figma desktop: 74×74 boxes, Nunito ~42px digits. Mobile: 54px boxes across 358px.
+// Figma desktop 361:11240: 74×74 boxes, Nunito ~42px digits, 10.5px radius.
 .box {
   flex: 0 1 74px;
   min-width: 0;
@@ -31,7 +31,7 @@
   color: var(--color-text-default);
   background: var(--color-bg-input);
   border: 1px solid var(--color-border-input);
-  border-radius: var(--radius-md);
+  border-radius: 10.5px;
   caret-color: var(--color-brand);
 
   &:focus {
@@ -45,10 +45,13 @@
     color: var(--color-text-disabled);
   }
 
+  // Mobile frame 361:10713: 48×54 boxes, spread across the row. Digit size isn't drawn filled.
   @include bp.mobile {
-    flex-basis: 54px;
-    font-size: 30px;
-    border-radius: var(--radius-sm);
+    flex: 0 0 48px;
+    aspect-ratio: auto;
+    height: 54px;
+    font-size: 28px;
+    border-radius: 6px;
   }
 }
 

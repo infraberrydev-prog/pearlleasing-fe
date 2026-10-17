@@ -1,8 +1,8 @@
 @use 'typography' as type;
 @use 'mixins';
 
-// Geometry from Figma: 16px padding; rail content 40px wide, panel content 280px;
-// 40px buttons with a 4px gap; logo row 48px, nav starts 72px from the top.
+// Figma 371:17323 (rail) / 367:15215 (panel): 16px padding, border/default on the right;
+// 48px logo row, 24px gap to the nav, 40px buttons with a 4px gap.
 :host {
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   height: 100%;
   padding: var(--spacing-xl);
   background: var(--color-bg-default);
-  border-right: 1px solid var(--color-border-subtle);
+  border-right: 1px solid var(--color-border-default);
 }
 
 :host(.is-expanded) {
@@ -28,22 +28,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 48px;
+  min-height: 48px;
 }
 
-// Logo PNG has padding; same crop as the login page, scaled to 72×49.
+// Expanded panel shows only the "PP" mark: Figma crops the logo PNG to 72×49.
 .logo {
   position: relative;
   width: 72px;
-  height: 49px;
+  height: 49.48px;
   overflow: hidden;
 
   img {
     position: absolute;
-    left: -20.88%;
-    top: -11.9%;
-    width: 141.76%;
-    height: 136.51%;
+    left: -50.65%;
+    top: -15.05%;
+    width: 201.05%;
+    height: 195.05%;
     max-width: none;
   }
 }
@@ -56,7 +56,6 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-sm);
-  color: var(--color-icon-subtle);
 
   &:hover {
     background: var(--color-bg-hovered);
@@ -67,24 +66,31 @@
   }
 }
 
+// Expanded: toggle icon sits flush right (Figma 367:15221).
+:host(.is-expanded) .toggle {
+  width: 24px;
+  height: 24px;
+}
+
 .nav {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
 }
 
-// Figma "_Sidebar button". Colors are not confirmed against Figma yet.
+// Figma "_Sidebar button": 8px 16px padding, 8px radius, Text md/Semibold.
+// Active: colors/bg/primary + brand text; inactive: transparent + colors/text/subtler.
 .item {
   @include mixins.reset-button;
-  @include type.text(md, medium);
+  @include type.text(md, semibold);
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   width: 100%;
-  height: 40px;
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-xl);
   border-radius: var(--radius-sm);
-  color: var(--color-text-subtle);
+  color: var(--color-text-subtler);
+  text-align: left;
   text-decoration: none;
   white-space: nowrap;
 
@@ -102,7 +108,15 @@
   }
 }
 
+// Rail: 40px square buttons with the icon centred.
+:host(:not(.is-expanded)) .item {
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
 .label {
+  flex: 1 1 0;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }

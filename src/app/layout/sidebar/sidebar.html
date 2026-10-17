@@ -28,7 +28,7 @@
         [attr.title]="expanded() ? null : item.label"
         (click)="navigated.emit()"
       >
-        <app-icon [name]="item.icon">{{ item.short }}</app-icon>
+        <app-icon [name]="item.icon" tint>{{ item.short }}</app-icon>
         @if (expanded()) {
           <span class="label">{{ item.label }}</span>
         }

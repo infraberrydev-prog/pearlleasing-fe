@@ -14,3 +14,18 @@ img {
   width: 100%;
   height: 100%;
 }
+
+.tinted {
+  width: 100%;
+  height: 100%;
+  background-color: currentColor;
+  mask: var(--icon-url) center / contain no-repeat;
+}
+
+// Hidden image that only detects a missing file for the tinted variant.
+.probe {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}

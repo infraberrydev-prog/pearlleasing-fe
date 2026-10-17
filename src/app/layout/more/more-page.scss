@@ -1,20 +1,21 @@
 @use 'typography' as type;
 @use 'mixins';
 
-// Figma: 358×56 card, 16px padding, 24px icon, 8px gap, 14/20 label.
+// Figma 385:24314: white card, border/subtle, 8px radius, soft drop shadow, 16px padding;
+// 24px icon, 8px gap, Lato Bold 14/20 in text/subtler.
 .row {
   @include mixins.reset-button;
-  @include type.text(sm, medium);
+  @include type.text(sm, bold);
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   width: 100%;
-  min-height: 56px;
   padding: var(--spacing-xl);
   background: var(--color-bg-default);
   border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
-  color: var(--color-text-default);
+  border-radius: var(--radius-sm);
+  box-shadow: 1px 1px 1px rgb(0 0 0 / 10%);
+  color: var(--color-text-subtler);
   text-align: left;
 
   &:hover {

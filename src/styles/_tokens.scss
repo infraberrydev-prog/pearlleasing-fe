@@ -76,7 +76,8 @@
   // ── Effects ──
   --shadow-lg: 0 12px 16px -4px rgb(51 57 66 / 8%), 0 4px 6px -2px rgb(51 57 66 / 3%);
   --blur-xl: 40px;
-  --color-backdrop: rgb(31 35 40 / 80%); // modal scrim (not a Figma variable — approximated from screenshots)
+  --color-backdrop: rgb(24 26 31 / 24%); // Figma "Modal" overlay (367:15479, 385:24709)
+  --backdrop-blur: 20px;
 
   // ── Typography ──
   --font-family-base: 'Lato', system-ui, sans-serif;

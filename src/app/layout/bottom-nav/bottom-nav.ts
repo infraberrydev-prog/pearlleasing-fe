@@ -3,7 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Icon } from '../../shared/ui';
 import { MOBILE_NAV_ITEMS } from '../nav-items';
 
-/** Figma "Bottom navigation" (mobile, 390×68). Tab contents are inferred: the instance wasn't inspectable. */
+/** Figma "Bottom navigation" (373:5545): Leasing Reports, Expenses Reports, More. */
 @Component({
   selector: 'app-bottom-nav',
   imports: [RouterLink, RouterLinkActive, Icon],
@@ -15,7 +15,7 @@ import { MOBILE_NAV_ITEMS } from '../nav-items';
         routerLinkActive="is-active"
         ariaCurrentWhenActive="page"
       >
-        <app-icon [name]="item.icon" />
+        <app-icon [name]="item.icon" tint />
         <span class="label">{{ item.label }}</span>
       </a>
     }

@@ -1,10 +1,20 @@
 @use 'typography' as type;
 @use 'breakpoints' as bp;
 
+// Desktop (Figma 385:24710): 564px, icon beside the text, buttons side by side.
 :host {
   display: block;
   width: 564px;
   max-width: calc(100vw - 32px);
+
+  // Tablet/mobile (Figma 385:25113, 385:25135): 400px max, everything centred and stacked.
+  @include bp.mobile {
+    width: 400px;
+  }
+
+  @include bp.tablet {
+    width: 400px;
+  }
 }
 
 .featured-icon {
@@ -61,9 +71,38 @@
   }
 }
 
-// Tablet/mobile modal frames weren't fetched; stack the buttons on narrow screens.
-@include bp.mobile {
+@mixin stacked {
+  app-dialog-shell {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .content {
+    width: 100%;
+  }
+
+  .text {
+    padding-right: 0;
+    text-align: center;
+  }
+
+  // Confirm on top, then cancel (12px apart).
   .actions {
     flex-direction: column-reverse;
+    gap: var(--spacing-lg);
+
+    > * {
+      flex: none;
+      width: 100%;
+    }
   }
+}
+
+@include bp.mobile {
+  @include stacked;
+}
+
+@include bp.tablet {
+  @include stacked;
 }

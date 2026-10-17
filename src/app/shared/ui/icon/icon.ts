@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  booleanAttribute,
+  computed,
+  effect,
+  input,
+  signal,
+} from '@angular/core';
 
 /**
  * Icons are the SVGs exported from Figma into `public/icons`. Colors are baked
@@ -24,12 +32,18 @@ export type IconName =
 /**
  * Icons not exported from Figma yet: the image is hidden and any projected
  * fallback content (e.g. an abbreviation) is shown instead of a broken image.
+ *
+ * `tint`: paint the icon's shape in the current text color instead of its baked-in
+ * color, for icons whose color follows a state (active/inactive navigation).
  */
 @Component({
   selector: 'app-icon',
   template: `
     @if (failed()) {
       <ng-content />
+    } @else if (tint()) {
+      <span class="tinted" [style.--icon-url]="maskUrl()"></span>
+      <img class="probe" [src]="src()" alt="" (error)="failed.set(true)" />
     } @else {
       <img
         [src]="src()"
@@ -44,6 +58,8 @@ export type IconName =
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.aria-hidden]': 'label() ? null : "true"',
+    '[attr.role]': 'label() ? "img" : null',
+    '[attr.aria-label]': 'tint() ? (label() ?? null) : null',
     '[style.--icon-size.px]': 'size()',
   },
 })
@@ -52,8 +68,10 @@ export class Icon {
   readonly size = input(24);
   /** Accessible name. Leave empty for decorative icons. */
   readonly label = input<string>();
+  readonly tint = input(false, { transform: booleanAttribute });
 
   protected readonly src = computed(() => `icons/${this.name()}.svg`);
+  protected readonly maskUrl = computed(() => `url("${this.src()}")`);
   protected readonly failed = signal(false);
 
   constructor() {

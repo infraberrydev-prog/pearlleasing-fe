@@ -13,11 +13,11 @@ export class LogoutService {
     this.confirmDialog
       .confirm({
         title: 'Are you sure you want to log out?',
-        // Figma shows placeholder "Text" here; this copy needs confirming.
-        message: 'You will need to log in again to access your reports.',
-        tone: 'warning',
+        message: 'Any unsaved changes will be lost after logging out.',
+        tone: 'danger',
         cancelLabel: 'Cancel',
         confirmLabel: 'Log out',
+        confirmVariant: 'danger',
       })
       .subscribe((confirmed) => {
         if (confirmed) this.store.dispatch(authActions.logout());

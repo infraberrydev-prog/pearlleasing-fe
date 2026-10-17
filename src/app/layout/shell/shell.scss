@@ -30,6 +30,7 @@
   inset: 0;
   z-index: 10;
   background: var(--color-backdrop);
+  backdrop-filter: blur(var(--backdrop-blur));
 
   @include bp.mobile {
     display: none;

@@ -33,7 +33,7 @@
       <p class="resend" aria-live="polite">
         Didn’t receive the code?
         @if (resendIn() > 0) {
-          <span>Resend in {{ resendIn() }}s</span>
+          <span class="countdown">Resend in {{ resendIn() }}s</span>
         } @else {
           <button type="button" class="resend-link" [disabled]="pending()" (click)="resend()">
             Resend Code

@@ -48,4 +48,5 @@ img {
 // Modal scrim used by the shared dialog service.
 .app-dialog-backdrop {
   background: var(--color-backdrop);
+  backdrop-filter: blur(var(--backdrop-blur));
 }

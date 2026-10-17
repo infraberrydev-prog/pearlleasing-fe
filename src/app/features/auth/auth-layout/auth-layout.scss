@@ -95,8 +95,7 @@
   padding: 96px 64px;
 
   @include bp.mobile {
-    align-items: flex-start;
-    padding: 78px var(--spacing-xl) 48px;
+    padding: var(--spacing-3xl) var(--spacing-xl);
   }
 }
 
