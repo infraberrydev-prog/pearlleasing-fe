@@ -92,7 +92,10 @@ export class ReportList {
   readonly error = input<string | null>(null);
 
   readonly queryChange = output<Partial<ReportQuery>>();
+  /** Report ID clicked: open the report. */
   readonly view = output<string>();
+  /** Eye icon clicked: show the report without leaving the list. */
+  readonly preview = output<string>();
   readonly create = output<void>();
   readonly deleteConfirmed = output<string>();
   readonly downloadConfirmed = output<readonly string[]>();

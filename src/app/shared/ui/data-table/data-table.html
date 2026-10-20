@@ -1,5 +1,5 @@
 <div class="scroller">
-  <table>
+  <table [style.min-width]="minWidth() ?? null">
     @if (caption()) {
       <caption class="visually-hidden">{{ caption() }}</caption>
     }

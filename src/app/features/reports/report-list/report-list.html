@@ -114,7 +114,7 @@
       <ng-template appCell="updatedAt" [appCellRows]="reports()" let-row>{{ row.updatedAt | reportDate }}</ng-template>
       <ng-template appCell="actions" [appCellRows]="reports()" let-row>
         <span class="row-actions">
-          <button type="button" class="icon-btn" [attr.aria-label]="'View ' + row.id" (click)="view.emit(row.id)">
+          <button type="button" class="icon-btn" [attr.aria-label]="'View ' + row.id" (click)="preview.emit(row.id)">
             <app-icon name="eye-open-subtle" />
           </button>
           @if (config().canDelete !== false) {
@@ -137,6 +137,7 @@
             [selected]="isSelected(report.id)"
             (selectedChange)="setSelected(report.id, $event)"
             (viewed)="view.emit(report.id)"
+            (previewed)="preview.emit(report.id)"
             (deleted)="confirmDelete(report)"
           />
         </li>

@@ -1,0 +1,41 @@
+<app-dialog-shell (closed)="ref.close()">
+  <div class="content">
+    <header class="header">
+      <h2 class="title" id="report-rows-title">{{ loaded()?.name ?? 'Report' }}</h2>
+      @if (loaded(); as value) {
+        <p class="subtitle">{{ value.createdAt | reportDate }}</p>
+      }
+    </header>
+
+    @if (report.isLoading()) {
+      <p class="status" role="status">Loading rows…</p>
+    } @else if (report.error()) {
+      <app-alert tone="error">{{ errorMessage() }}</app-alert>
+    } @else {
+      <app-data-table
+        [columns]="columns"
+        [rows]="pageRows()"
+        [rowKey]="rowKey"
+        dense
+        minWidth="2200px"
+        [caption]="'Rows of ' + (loaded()?.name ?? 'the report')"
+      >
+        @for (key of textKeys; track key) {
+          <ng-template [appCell]="key" [appCellRows]="pageRows()" let-row>{{ row[key] || '—' }}</ng-template>
+        }
+        @for (key of amountKeys; track key) {
+          <ng-template [appCell]="key" [appCellRows]="pageRows()" let-row>{{ row[key] | peso }}</ng-template>
+        }
+        <ng-template appCell="paymentStatus" [appCellRows]="pageRows()" let-row>
+          <app-chip [tone]="row.paymentStatus === 'paid' ? 'success' : 'warning'">
+            {{ row.paymentStatus === 'paid' ? 'Paid' : 'Unpaid' }}
+          </app-chip>
+        </ng-template>
+      </app-data-table>
+
+      @if (pageCount() > 1) {
+        <app-pagination [(page)]="page" [pageCount]="pageCount()" />
+      }
+    }
+  </div>
+</app-dialog-shell>

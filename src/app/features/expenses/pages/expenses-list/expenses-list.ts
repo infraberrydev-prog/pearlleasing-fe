@@ -36,6 +36,7 @@ const CONFIG: ReportListConfig = {
       [error]="error()"
       (queryChange)="onQueryChange($event)"
       (view)="router.navigate(['/expenses', $event])"
+      (preview)="router.navigate(['/expenses', $event])"
       (create)="router.navigate(['/expenses/new'])"
       (deleteConfirmed)="store.dispatch(actions.deleteConfirmed({ id: $event }))"
       (downloadConfirmed)="store.dispatch(actions.downloadConfirmed({ ids: $event }))"

@@ -23,6 +23,7 @@ const REPORTS: ReportSummary[] = [
       [loaded]="true"
       (queryChange)="changes.push($event)"
       (view)="viewed = $event"
+      (preview)="previewed = $event"
       (deleteConfirmed)="deleted = $event"
       (downloadConfirmed)="downloaded = $event"
     />
@@ -35,6 +36,7 @@ class Host {
   query = signal<ReportQuery>(DEFAULT_QUERY);
   changes: Partial<ReportQuery>[] = [];
   viewed: string | null = null;
+  previewed: string | null = null;
   deleted: string | null = null;
   downloaded: readonly string[] | null = null;
 }
@@ -148,9 +150,14 @@ describe('ReportList', () => {
     expect(host.downloaded).toEqual(['RP1']);
   });
 
-  it('opens a report from its ID', () => {
+  it('opens a report from its ID and previews it from the eye icon', () => {
     const { el, host } = setup();
     el.querySelector<HTMLButtonElement>('.report-id')!.click();
+    expect(host.viewed).toBe('RP1');
+    expect(host.previewed).toBeNull();
+
+    el.querySelector<HTMLButtonElement>('[aria-label="View RP2"]')!.click();
+    expect(host.previewed).toBe('RP2');
     expect(host.viewed).toBe('RP1');
   });
 });

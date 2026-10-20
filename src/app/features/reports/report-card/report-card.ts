@@ -23,6 +23,9 @@ export class ReportCard {
   readonly compact = input(false);
   readonly canDelete = input(true);
   readonly selected = model(false);
+  /** Report ID: open the report. */
   readonly viewed = output<void>();
+  /** Eye icon / View menu item. */
+  readonly previewed = output<void>();
   readonly deleted = output<void>();
 }

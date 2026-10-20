@@ -53,6 +53,7 @@ export class CellDef<T = unknown> {
   templateUrl: './data-table.html',
   styleUrl: './data-table.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.is-dense]': 'dense()' },
 })
 export class DataTable<T extends object> {
   readonly columns = input.required<readonly TableColumn[]>();
@@ -64,6 +65,10 @@ export class DataTable<T extends object> {
   readonly selected = model<readonly unknown[]>([]);
   /** Accessible name for the table. */
   readonly caption = input<string>();
+  /** Smaller rows and text, e.g. the report rows modal (Figma 367:15479). */
+  readonly dense = input(false, { transform: booleanAttribute });
+  /** Overrides the 960px minimum width, e.g. for tables with many columns. */
+  readonly minWidth = input<string>();
 
   private readonly cellDefs = contentChildren(CellDef);
   protected readonly templates = computed(

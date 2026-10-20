@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, inject } from '@angular/core';
+import { Dialog } from '@angular/cdk/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { PageHeader } from '../../../../layout/page-header/page-header';
 import { NoticeToast } from '../../../../shared/ui';
 import { ReportListConfig, ReportQuery } from '../../../reports/models/report';
 import { ReportList } from '../../../reports/report-list/report-list';
+import { ReportRowsDialog, ReportRowsDialogData } from '../../components/report-rows-dialog/report-rows-dialog';
 import { leasingListActions } from '../../store/leasing.actions';
 import { leasingFeature } from '../../store/leasing.feature';
 
@@ -35,6 +37,7 @@ const CONFIG: ReportListConfig = {
       [error]="error()"
       (queryChange)="onQueryChange($event)"
       (view)="router.navigate(['/leasing', $event])"
+      (preview)="openRows($event)"
       (create)="router.navigate(['/leasing/new'])"
       (deleteConfirmed)="store.dispatch(actions.deleteConfirmed({ id: $event }))"
       (downloadConfirmed)="store.dispatch(actions.downloadConfirmed({ ids: $event }))"
@@ -48,6 +51,9 @@ export class LeasingList {
   protected readonly router = inject(Router);
   protected readonly actions = leasingListActions;
   protected readonly config = CONFIG;
+  private readonly dialog = inject(Dialog);
+  // The route's injector, so the dialog gets this feature's LeasingApi.
+  private readonly injector = inject(Injector);
 
   protected readonly reports = this.store.selectSignal(leasingFeature.selectReports);
   protected readonly query = this.store.selectSignal(leasingFeature.selectQuery);
@@ -65,5 +71,15 @@ export class LeasingList {
 
   protected onQueryChange(query: Partial<ReportQuery>): void {
     this.store.dispatch(leasingListActions.queryChanged({ query }));
+  }
+
+  /** Eye icon: the report's rows in a read-only modal. */
+  protected openRows(id: string): void {
+    this.dialog.open<void, ReportRowsDialogData>(ReportRowsDialog, {
+      data: { id },
+      injector: this.injector,
+      backdropClass: 'app-dialog-backdrop',
+      ariaLabelledBy: 'report-rows-title',
+    });
   }
 }

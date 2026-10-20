@@ -73,6 +73,27 @@ tr.is-selected td {
   text-align: center;
 }
 
+// Dense: 40px header, 44px rows, Text xs.
+:host(.is-dense) {
+  table {
+    font-size: var(--text-xs-size);
+    line-height: var(--text-xs-line);
+  }
+
+  th,
+  td {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+
+  th {
+    height: 40px;
+  }
+
+  td {
+    height: 44px;
+  }
+}
+
 .visually-hidden {
   @include mixins.visually-hidden;
 }

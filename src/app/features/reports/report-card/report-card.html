@@ -20,7 +20,7 @@
         </button>
       } @else {
         <span class="actions">
-          <button type="button" class="icon-btn" [attr.aria-label]="'View ' + report().id" (click)="viewed.emit()">
+          <button type="button" class="icon-btn" [attr.aria-label]="'View ' + report().id" (click)="previewed.emit()">
             <app-icon name="eye-open" />
           </button>
           @if (canDelete()) {
@@ -55,7 +55,7 @@
 
 <ng-template #actions>
   <app-menu>
-    <button app-menu-item (triggered)="viewed.emit()"><app-icon name="eye-open" />View</button>
+    <button app-menu-item (triggered)="previewed.emit()"><app-icon name="eye-open" />View</button>
     @if (canDelete()) {
       <button app-menu-item (triggered)="deleted.emit()"><app-icon name="trash-03" />Delete</button>
     }
