@@ -58,7 +58,7 @@ export const download$ = createEffect(
       ofType(expensesListActions.downloadConfirmed),
       exhaustMap(({ ids }) =>
         api.export(ids).pipe(
-          tap((blob) => saveFile(blob, 'expenses-reports.csv')),
+          tap((files) => files.forEach(({ blob, fileName }) => saveFile(blob, fileName))),
           map(() => expensesApiActions.downloaded()),
           catchError((error) => of(expensesApiActions.downloadFailed({ error: message(error) }))),
         ),

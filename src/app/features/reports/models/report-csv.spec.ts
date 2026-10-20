@@ -36,9 +36,9 @@ describe('mock API exports', () => {
   afterEach(() => vi.useRealTimers());
 
   async function exported(api: MockLeasingApi | MockExpensesApi, ids: string[]) {
-    const blob = firstValueFrom(api.export(ids));
+    const files = firstValueFrom(api.export(ids));
     await vi.advanceTimersByTimeAsync(400);
-    return (await blob).text();
+    return (await files)[0].blob.text();
   }
 
   // The sample data is created in the machine's local time, so these check the shape only;

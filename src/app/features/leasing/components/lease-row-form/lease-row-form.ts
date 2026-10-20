@@ -41,6 +41,8 @@ export class LeaseRowFormComponent {
   readonly canRemove = input(true, { transform: booleanAttribute });
   /** Edit / duplicate / delete buttons (create form). The detail page hides them. */
   readonly showTools = input(true, { transform: booleanAttribute });
+  /** Only the delete button (detail page: the API deletes single rows; not in Figma). */
+  readonly showDelete = input(false, { transform: booleanAttribute });
   /** Unpaid / Paid chip before the row label (detail page, Figma 238:2740). */
   readonly showStatus = input(false, { transform: booleanAttribute });
   readonly duplicate = output<void>();
@@ -73,7 +75,7 @@ export class LeaseRowFormComponent {
     return formatPeso(totalOf(this.form().getRawValue()));
   }
 
-  protected error(name: keyof LeaseRowForm['controls'], label: string): string | null {
+  protected error(name: Exclude<keyof LeaseRowForm['controls'], 'id'>, label: string): string | null {
     return fieldError(this.form().controls[name], label);
   }
 

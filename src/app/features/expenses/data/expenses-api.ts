@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Observable, defer, delay, of, throwError } from 'rxjs';
+import { DownloadedFile } from '../../../shared/utils/api';
 import { ReportPage, ReportQuery, ReportSummary, queryReports } from '../../reports/models/report';
 import { mockStartsEmpty } from '../../reports/models/mock-options';
 import { buildReportCsv } from '../../reports/models/report-csv';
 import { ExpenseReportDetail, ExpenseReportDraft, expenseTotal } from '../models/expense-report';
 
-/** Backend contract for expenses reports. Only the mock exists until the API is known. */
+/** Backend contract for expenses reports. `Mock*` is the in-memory version used by tests and `useMocks`. */
 export abstract class ExpensesApi {
   abstract list(query: ReportQuery): Observable<ReportPage>;
   abstract get(id: string): Observable<ExpenseReportDetail>;
   abstract create(draft: ExpenseReportDraft): Observable<ExpenseReportDetail>;
   abstract update(id: string, draft: ExpenseReportDraft): Observable<ExpenseReportDetail>;
   abstract delete(id: string): Observable<void>;
-  /** CSV of the given reports, or of every report when `ids` is empty. */
-  abstract export(ids: readonly string[]): Observable<Blob>;
+  /** Files for the given reports, or for every report when `ids` is empty. */
+  abstract export(ids: readonly string[]): Observable<DownloadedFile[]>;
 }
 
 const LATENCY_MS = 400;
@@ -97,11 +98,11 @@ export class MockExpensesApi extends ExpensesApi {
     }).pipe(delay(LATENCY_MS));
   }
 
-  export(ids: readonly string[]): Observable<Blob> {
+  export(ids: readonly string[]): Observable<DownloadedFile[]> {
     return defer(() => {
       const rows = (ids.length ? this.reports.filter((r) => ids.includes(r.id)) : this.reports).map(summarize);
       const csv = buildReportCsv(rows, 'Total Expenses');
-      return of(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      return of([{ blob: new Blob([csv], { type: 'text/csv;charset=utf-8' }), fileName: 'expenses-reports.csv' }]);
     }).pipe(delay(LATENCY_MS));
   }
 }

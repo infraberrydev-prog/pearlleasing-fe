@@ -39,6 +39,10 @@ export class MockAuthApi extends AuthApi {
     return defer(() => of(this.challenge())).pipe(delay(LATENCY_MS));
   }
 
+  logout(_token: string): Observable<void> {
+    return of(undefined);
+  }
+
   private challenge(): OtpChallenge {
     return {
       challengeId: 'mock-challenge',

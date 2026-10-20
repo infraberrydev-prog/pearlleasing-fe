@@ -1,7 +1,10 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideState } from '@ngrx/store';
 import { unsavedChangesGuard } from '../../shared/utils/unsaved-changes.guard';
+import { USE_MOCK_APIS } from '../../core/config';
+import { HttpLeasingApi } from './data/http-leasing-api';
 import { LeasingApi, MockLeasingApi } from './data/leasing-api';
 import * as leasingEffects from './store/leasing.effects';
 import { leasingFeature } from './store/leasing.feature';
@@ -10,8 +13,9 @@ export const leasingRoutes: Routes = [
   {
     path: '',
     providers: [
-      // Swap for the HTTP implementation once the backend contract is known.
-      { provide: LeasingApi, useClass: MockLeasingApi },
+      MockLeasingApi,
+      HttpLeasingApi,
+      { provide: LeasingApi, useFactory: () => (inject(USE_MOCK_APIS) ? inject(MockLeasingApi) : inject(HttpLeasingApi)) },
       provideState(leasingFeature),
       provideEffects(leasingEffects),
     ],

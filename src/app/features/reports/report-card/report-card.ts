@@ -21,6 +21,7 @@ export class ReportCard {
   readonly amountLabel = input.required<string>();
   /** Mobile layout: actions in a menu, dates stacked. */
   readonly compact = input(false);
+  readonly canDelete = input(true);
   readonly selected = model(false);
   readonly viewed = output<void>();
   readonly deleted = output<void>();

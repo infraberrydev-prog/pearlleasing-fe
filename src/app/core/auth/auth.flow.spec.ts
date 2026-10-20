@@ -5,6 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { Store, provideStore } from '@ngrx/store';
 import { firstValueFrom } from 'rxjs';
+import { USE_MOCK_APIS } from '../config';
 import { authInterceptor } from './auth.interceptor';
 import { authGuard, guestGuard, otpChallengeGuard } from './auth.guards';
 import { provideAuth } from './auth.providers';
@@ -23,6 +24,7 @@ function setup() {
       provideStore(),
       provideEffects(),
       provideAuth(),
+      { provide: USE_MOCK_APIS, useValue: true },
       provideHttpClient(withInterceptors([authInterceptor])),
       provideHttpClientTesting(),
     ],

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, defer, delay, of, throwError } from 'rxjs';
+import { DownloadedFile } from '../../../shared/utils/api';
 import { ReportPage, ReportQuery, ReportSummary, queryReports } from '../../reports/models/report';
 import { mockStartsEmpty } from '../../reports/models/mock-options';
 import { buildReportCsv } from '../../reports/models/report-csv';
@@ -11,15 +12,16 @@ import {
   reportTotal,
 } from '../models/leasing-report';
 
-/** Backend contract for leasing reports. Only the mock exists until the API is known. */
+/** Backend contract for leasing reports. `Mock*` is the in-memory version used by tests and `useMocks`. */
 export abstract class LeasingApi {
-  abstract list(query: ReportQuery): Observable<ReportPage>;
+  /** `refresh`: reload from the server instead of reusing the last list (search, sort and paging don't). */
+  abstract list(query: ReportQuery, refresh?: boolean): Observable<ReportPage>;
   abstract get(id: string): Observable<LeasingReportDetail>;
   abstract create(draft: LeasingReportDraft): Observable<LeasingReportDetail>;
   abstract update(id: string, draft: LeasingReportDraft): Observable<LeasingReportDetail>;
   abstract delete(id: string): Observable<void>;
-  /** CSV of the given reports, or of every report when `ids` is empty. */
-  abstract export(ids: readonly string[]): Observable<Blob>;
+  /** Files for the given reports, or for every report when `ids` is empty. */
+  abstract export(ids: readonly string[]): Observable<DownloadedFile[]>;
   abstract lookups(): Observable<LeasingLookups>;
 }
 
@@ -131,11 +133,11 @@ export class MockLeasingApi extends LeasingApi {
     }).pipe(delay(LATENCY_MS));
   }
 
-  export(ids: readonly string[]): Observable<Blob> {
+  export(ids: readonly string[]): Observable<DownloadedFile[]> {
     return defer(() => {
       const rows = (ids.length ? this.reports.filter((r) => ids.includes(r.id)) : this.reports).map(summarize);
       const csv = buildReportCsv(rows, 'Expected Revenue');
-      return of(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      return of([{ blob: new Blob([csv], { type: 'text/csv;charset=utf-8' }), fileName: 'leasing-reports.csv' }]);
     }).pipe(delay(LATENCY_MS));
   }
 

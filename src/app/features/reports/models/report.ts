@@ -81,6 +81,8 @@ export interface ReportListConfig {
   emptyTitle: string;
   /** Accessible name for the table, e.g. "Leasing reports". */
   caption: string;
+  /** Shows the Delete action on each report. Default true. */
+  canDelete?: boolean;
 }
 
 /**

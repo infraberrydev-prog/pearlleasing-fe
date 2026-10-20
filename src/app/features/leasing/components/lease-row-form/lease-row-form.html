@@ -17,8 +17,9 @@
       {{ summary() }}
     </span>
   </button>
-  @if (showTools()) {
+  @if (showTools() || showDelete()) {
   <div class="tools">
+    @if (showTools()) {
     <button type="button" class="tool" [attr.aria-label]="'Edit row ' + (index() + 1)" (click)="expanded.set(true)">
       <!-- Exported cropped to 15×15 (no padding), so drawn at 15px to match the 20px copy icon. -->
       <app-icon name="pencil-02" [size]="15">✎</app-icon>
@@ -26,6 +27,7 @@
     <button type="button" class="tool" [attr.aria-label]="'Duplicate row ' + (index() + 1)" (click)="duplicate.emit()">
       <app-icon name="copy-01" [size]="20">⧉</app-icon>
     </button>
+    }
     <button
       type="button"
       class="tool"

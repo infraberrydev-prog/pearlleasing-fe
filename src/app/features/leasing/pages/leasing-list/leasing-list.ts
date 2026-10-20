@@ -12,6 +12,8 @@ const CONFIG: ReportListConfig = {
   amountLabel: 'Expected Revenue',
   emptyTitle: 'No available reports yet.',
   caption: 'Leasing reports',
+  // The API deletes rows inside a report (on its detail page), not whole reports.
+  canDelete: false,
 };
 
 /** Leasing Reports list page (Figma 435:11353 / 374:5831 / 361:13826). */

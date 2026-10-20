@@ -83,6 +83,11 @@ export class LeasingEditor implements HasUnsavedChanges {
   protected readonly isDetail = this.id !== null;
 
   protected readonly editor = this.store.selectSignal(leasingFeature.selectEditor);
+  /**
+   * Only the report itself: saving and errors also change `editor`, and refilling the form then
+   * would bring back rows the user just deleted (or wipe their edits after a failed save).
+   */
+  private readonly loadedReport = computed(() => this.editor().report);
   protected readonly lookups = this.store.selectSignal(leasingFeature.selectLookups);
   private readonly isMobile = toSignal(
     inject(BreakpointObserver).observe('(max-width: 767.98px)').pipe(map((s) => s.matches)),
@@ -175,7 +180,7 @@ export class LeasingEditor implements HasUnsavedChanges {
 
     // Detail page: fill the form once the report arrives.
     effect(() => {
-      const report = this.editor().report;
+      const report = this.loadedReport();
       if (report && this.isDetail) this.fill(report);
     });
     // A new search or sort starts from the first page.
@@ -218,7 +223,8 @@ export class LeasingEditor implements HasUnsavedChanges {
 
   protected duplicateRow(index: number): void {
     const copy = createRowForm();
-    copy.setValue(this.rows.at(index).getRawValue());
+    // A copy is a new row, so it must not reuse the saved row id.
+    copy.setValue({ ...this.rows.at(index).getRawValue(), id: null });
     this.rows.insert(index + 1, copy);
     this.form.markAsDirty();
     this.rowsVersion.update((v) => v + 1);

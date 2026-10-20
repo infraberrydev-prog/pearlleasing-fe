@@ -20,6 +20,8 @@ export interface OtpChallenge {
 
 export interface AuthSession {
   token: string;
+  /** Set by the real API; the mock has none. */
+  refreshToken?: string;
   user: User;
 }
 

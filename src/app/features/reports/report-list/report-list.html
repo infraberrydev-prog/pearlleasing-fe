@@ -117,9 +117,11 @@
           <button type="button" class="icon-btn" [attr.aria-label]="'View ' + row.id" (click)="view.emit(row.id)">
             <app-icon name="eye-open-subtle" />
           </button>
-          <button type="button" class="icon-btn" [attr.aria-label]="'Delete ' + row.id" (click)="confirmDelete(row)">
-            <app-icon name="trash-04" />
-          </button>
+          @if (config().canDelete !== false) {
+            <button type="button" class="icon-btn" [attr.aria-label]="'Delete ' + row.id" (click)="confirmDelete(row)">
+              <app-icon name="trash-04" />
+            </button>
+          }
         </span>
       </ng-template>
     </app-data-table>
@@ -131,6 +133,7 @@
             [report]="report"
             [amountLabel]="config().amountLabel"
             [compact]="layout() === 'mobile'"
+            [canDelete]="config().canDelete !== false"
             [selected]="isSelected(report.id)"
             (selectedChange)="setSelected(report.id, $event)"
             (viewed)="view.emit(report.id)"

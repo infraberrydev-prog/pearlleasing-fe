@@ -181,7 +181,9 @@ describe('LeasingEditor detail page (Unpaid → Paid)', () => {
     expect(s.el.querySelector('h1')!.textContent).toBe('RP1 - Report for Month of January');
     expect(s.el.querySelector<HTMLInputElement>('.report-name input')!.value).toBe('Report for Month of January');
     expect(s.el.querySelector('app-lease-row-form app-chip')!.textContent?.trim()).toBe('Unpaid');
-    expect(s.el.querySelector('.tools')).toBeNull();
+    // Only Delete: no edit or duplicate on the detail page.
+    expect(s.el.querySelector('[aria-label="Edit row 1"]')).toBeNull();
+    expect(s.el.querySelector('[aria-label="Duplicate row 1"]')).toBeNull();
     expect(s.button('Update Report').disabled).toBe(true);
   });
 
@@ -203,6 +205,27 @@ describe('LeasingEditor detail page (Unpaid → Paid)', () => {
       id: 'RP1',
       draft: { rows: [{ paymentStatus: 'paid', lesseeName: 'John Martial' }] },
     });
+  });
+
+  it('deletes a row and submits the report without it', () => {
+    const s = open(many(2));
+    s.el.querySelector<HTMLButtonElement>('[aria-label="Delete row 2"]')!.click();
+    TestBed.tick();
+    Array.from(document.querySelectorAll<HTMLButtonElement>('.cdk-overlay-pane .actions button')).at(-1)!.click();
+    s.fixture.detectChanges();
+
+    expect(s.el.querySelectorAll('app-lease-row-form').length).toBe(1);
+    s.button('Update Report').click();
+    const action = s.dispatch.mock.calls
+      .map(([a]) => a as unknown as Action)
+      .find((a) => a.type === leasingEditorActions.submitted.type);
+    expect(action).toMatchObject({ draft: { rows: [{ lesseeName: 'Lessee 1' }] } });
+
+    // While saving, the old report is still in the store; the deleted row must not come back.
+    const state = s.store.selectSignal((st: object) => st)() as { leasing: typeof initialLeasingState };
+    s.store.setState({ leasing: { ...state.leasing, editor: { ...state.leasing.editor, saving: true } } });
+    s.fixture.detectChanges();
+    expect(s.el.querySelectorAll('app-lease-row-form').length).toBe(1);
   });
 
   it('pages rows ten at a time and counts them', () => {

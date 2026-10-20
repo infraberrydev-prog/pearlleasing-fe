@@ -15,6 +15,8 @@ const amount = (value: number | null, required: boolean) =>
 
 export function createRowForm(row?: LeaseRow) {
   return new FormGroup({
+    // Not a field: carries the saved row id so updates go to the right row.
+    id: new FormControl<number | null>(row?.id ?? null),
     buildingType: text(row?.buildingType, [Validators.required]),
     vendor: text(row?.vendor, [Validators.required]),
     stall: text(row?.stall, [Validators.required]),
@@ -55,6 +57,7 @@ export function totalOf(value: LeaseRowValue): number {
 export function toLeaseRow(value: LeaseRowValue): LeaseRow {
   const optional = (t: string) => (t.trim() === '' ? null : t.trim());
   return {
+    ...(value.id === null ? {} : { id: value.id }),
     buildingType: value.buildingType.trim(),
     vendor: value.vendor.trim(),
     stall: value.stall.trim(),

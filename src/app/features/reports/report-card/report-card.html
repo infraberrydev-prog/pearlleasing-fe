@@ -23,9 +23,11 @@
           <button type="button" class="icon-btn" [attr.aria-label]="'View ' + report().id" (click)="viewed.emit()">
             <app-icon name="eye-open" />
           </button>
-          <button type="button" class="icon-btn" [attr.aria-label]="'Delete ' + report().id" (click)="deleted.emit()">
-            <app-icon name="trash-03" />
-          </button>
+          @if (canDelete()) {
+            <button type="button" class="icon-btn" [attr.aria-label]="'Delete ' + report().id" (click)="deleted.emit()">
+              <app-icon name="trash-03" />
+            </button>
+          }
         </span>
       }
     </div>
@@ -54,6 +56,8 @@
 <ng-template #actions>
   <app-menu>
     <button app-menu-item (triggered)="viewed.emit()"><app-icon name="eye-open" />View</button>
-    <button app-menu-item (triggered)="deleted.emit()"><app-icon name="trash-03" />Delete</button>
+    @if (canDelete()) {
+      <button app-menu-item (triggered)="deleted.emit()"><app-icon name="trash-03" />Delete</button>
+    }
   </app-menu>
 </ng-template>

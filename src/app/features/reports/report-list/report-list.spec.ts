@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { BehaviorSubject } from 'rxjs';
-import { DEFAULT_QUERY, ReportQuery, ReportSummary } from '../models/report';
+import { DEFAULT_QUERY, ReportListConfig, ReportQuery, ReportSummary } from '../models/report';
 import { ReportList } from './report-list';
 
 const REPORTS: ReportSummary[] = [
@@ -14,7 +14,7 @@ const REPORTS: ReportSummary[] = [
   imports: [ReportList],
   template: `
     <app-report-list
-      [config]="{ amountLabel: 'Expected Revenue', emptyTitle: 'No available reports yet.', caption: 'Leasing reports' }"
+      [config]="config()"
       [reports]="reports()"
       [query]="query()"
       [total]="reports().length"
@@ -29,6 +29,7 @@ const REPORTS: ReportSummary[] = [
   `,
 })
 class Host {
+  config = signal<ReportListConfig>({ amountLabel: 'Expected Revenue', emptyTitle: 'No available reports yet.', caption: 'Leasing reports' });
   reports = signal<ReportSummary[]>(REPORTS);
   grandTotal = signal(2);
   query = signal<ReportQuery>(DEFAULT_QUERY);
@@ -118,6 +119,19 @@ describe('ReportList', () => {
 
     overlayButtons()[1].click();
     expect(host.deleted).toBe('RP2');
+  });
+
+  it('hides Delete when the config turns it off', () => {
+    const { fixture, el, host } = setup();
+    host.config.update((c) => ({ ...c, canDelete: false }));
+    fixture.detectChanges();
+    expect(el.querySelector('[aria-label="Delete RP1"]')).toBeNull();
+    TestBed.resetTestingModule();
+
+    const tablet = setup('tablet');
+    tablet.host.config.update((c) => ({ ...c, canDelete: false }));
+    tablet.fixture.detectChanges();
+    expect(tablet.el.querySelector('[aria-label="Delete RP1"]')).toBeNull();
   });
 
   it('downloads the selected reports after confirmation', () => {

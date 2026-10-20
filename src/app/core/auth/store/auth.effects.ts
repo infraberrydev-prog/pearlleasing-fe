@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { EMPTY, catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { EMPTY, catchError, exhaustMap, map, mergeMap, of, tap } from 'rxjs';
 import { AuthApi } from '../auth-api';
 import { AuthStorage } from '../auth-storage';
 import { AuthError, AuthErrorCode } from '../auth.models';
@@ -80,12 +80,17 @@ export const signedIn$ = createEffect(
 );
 
 export const signedOut$ = createEffect(
-  (actions$ = inject(Actions), router = inject(Router), storage = inject(AuthStorage)) =>
+  (actions$ = inject(Actions), router = inject(Router), storage = inject(AuthStorage), api = inject(AuthApi)) =>
     actions$.pipe(
       ofType(authActions.logout, authActions.sessionExpired, authActions.backToLogin),
-      tap(() => {
+      mergeMap(({ type }) => {
+        // The store is already cleared by now, so take the token from storage before dropping it.
+        const token = storage.read()?.token;
         storage.clear();
         router.navigateByUrl('/login');
+        return type === authActions.logout.type && token
+          ? api.logout(token).pipe(catchError(() => EMPTY))
+          : EMPTY;
       }),
     ),
   { functional: true, dispatch: false },

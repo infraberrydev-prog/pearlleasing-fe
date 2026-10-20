@@ -2,6 +2,8 @@ export type PaymentStatus = 'unpaid' | 'paid';
 
 /** One lessee line of a leasing report (Figma create form 315:6937). */
 export interface LeaseRow {
+  /** Server row id; absent on rows that were never saved. */
+  id?: number;
   // Lessee Information
   buildingType: string;
   vendor: string;

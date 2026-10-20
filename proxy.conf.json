@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://stunning-capybara-wvrx6j74v9vg3p5g-5275.app.github.dev",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
+}

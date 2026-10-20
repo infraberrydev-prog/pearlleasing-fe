@@ -37,6 +37,11 @@ export class ExpensesEditor implements HasUnsavedChanges {
   protected readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id');
   protected readonly isDetail = this.id !== null;
   protected readonly editor = this.store.selectSignal(expensesFeature.selectEditor);
+  /**
+   * Only the report itself: saving and errors also change `editor`, and refilling the form then
+   * would bring back rows the user just deleted (or wipe their edits after a failed save).
+   */
+  private readonly loadedReport = computed(() => this.editor().report);
 
   protected readonly form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -82,7 +87,7 @@ export class ExpensesEditor implements HasUnsavedChanges {
     this.form.statusChanges.pipe(takeUntilDestroyed(destroyRef)).subscribe(() => this.bump());
 
     effect(() => {
-      const report = this.editor().report;
+      const report = this.loadedReport();
       if (report && this.isDetail) this.fill(report);
     });
   }

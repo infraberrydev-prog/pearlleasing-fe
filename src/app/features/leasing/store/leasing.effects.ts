@@ -14,8 +14,9 @@ export const load$ = createEffect(
   (actions$ = inject(Actions), api = inject(LeasingApi), store = inject(Store)) =>
     actions$.pipe(
       ofType(leasingListActions.opened, leasingListActions.queryChanged, leasingApiActions.deleted),
-      switchMap(() =>
-        api.list(store.selectSignal(leasingFeature.selectQuery)()).pipe(
+      // Search, sort, filter and paging reuse the loaded list; opening the page or deleting reloads it.
+      switchMap(({ type }) =>
+        api.list(store.selectSignal(leasingFeature.selectQuery)(), type !== leasingListActions.queryChanged.type).pipe(
           map((page) => leasingApiActions.loaded({ page })),
           catchError((error) => of(leasingApiActions.loadFailed({ error: message(error) }))),
         ),
@@ -58,7 +59,7 @@ export const download$ = createEffect(
       ofType(leasingListActions.downloadConfirmed),
       exhaustMap(({ ids }) =>
         api.export(ids).pipe(
-          tap((blob) => saveFile(blob, 'leasing-reports.csv')),
+          tap((files) => files.forEach(({ blob, fileName }) => saveFile(blob, fileName))),
           map(() => leasingApiActions.downloaded()),
           catchError((error) => of(leasingApiActions.downloadFailed({ error: message(error) }))),
         ),
