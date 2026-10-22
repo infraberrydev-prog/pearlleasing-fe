@@ -1,8 +1,11 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideState } from '@ngrx/store';
 import { unsavedChangesGuard } from '../../shared/utils/unsaved-changes.guard';
+import { USE_MOCK_APIS } from '../../core/config';
 import { ExpensesApi, MockExpensesApi } from './data/expenses-api';
+import { HttpExpensesApi } from './data/http-expenses-api';
 import * as expensesEffects from './store/expenses.effects';
 import { expensesFeature } from './store/expenses.feature';
 
@@ -10,8 +13,9 @@ export const expensesRoutes: Routes = [
   {
     path: '',
     providers: [
-      // Swap for the HTTP implementation once the backend contract is known.
-      { provide: ExpensesApi, useClass: MockExpensesApi },
+      MockExpensesApi,
+      HttpExpensesApi,
+      { provide: ExpensesApi, useFactory: () => (inject(USE_MOCK_APIS) ? inject(MockExpensesApi) : inject(HttpExpensesApi)) },
       provideState(expensesFeature),
       provideEffects(expensesEffects),
     ],

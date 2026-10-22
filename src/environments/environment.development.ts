@@ -4,6 +4,6 @@ import { Environment } from './environment.model';
 export const environment: Environment = {
   production: false,
   apiBaseUrl: '/api',
-  // Auth uses the real API; leasing and expenses stay on mocks until they are integrated.
+  // true runs the app on in-memory sample data, without the backend.
   useMocks: false,
 };

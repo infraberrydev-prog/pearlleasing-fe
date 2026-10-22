@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, concat, forkJoin, last, map, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config';
-import { DownloadedFile, apiError, fileNameFrom, utcIso } from '../../../shared/utils/api';
+import { DownloadedFile, apiError, downloadReports, getAllPages, numericId, utcIso } from '../../../shared/utils/api';
 import { ReportPage, ReportQuery, ReportSummary, queryReports } from '../../reports/models/report';
 import { LeaseRow, LeasingLookups, LeasingReportDetail, LeasingReportDraft, reportTotal } from '../models/leasing-report';
 import { LeasingApi } from './leasing-api';
@@ -13,7 +13,9 @@ interface ReportListDto {
   id: number;
   reportId: string;
   reportName: string;
-  expectedCashRevenue: number;
+  /** Older servers; the current one sends the amount as `totalExpenses`. */
+  expectedCashRevenue?: number;
+  totalExpenses?: number;
   dateTimeCreated: string;
   lastDateUpdated: string | null;
 }
@@ -66,16 +68,8 @@ interface Directory {
 const PAYMENT_METHODS = ['Cash', 'Gcash', 'Bank Transfer', 'Check'];
 
 /** The API pages but has no search, sort or filter, so the list loads every report and queries locally. */
-const ALL = { page: 1, pageSize: 1000 };
 /** The details endpoint still names its page parameter `pageNumber`. */
 const ALL_ROWS = { pageNumber: 1, pageSize: 1000 };
-
-/** "RP00004" → 4. The API's formatted ids are the numeric id with a prefix. */
-export function numericId(id: string): number {
-  const digits = /\d+/.exec(id);
-  if (!digits) throw new Error(`Invalid report ID "${id}".`);
-  return Number(digits[0]);
-}
 
 const sameText = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 const title = (status: string) => (status === 'paid' ? 'Paid' : 'Unpaid');
@@ -153,24 +147,24 @@ export class HttpLeasingApi extends LeasingApi {
   }
 
   /**
-   * The API saves rows, not reports: changed rows go to update-report, new rows to rows/add and
-   * removed rows to rows/delete. It cannot rename a report.
+   * The API saves rows, not reports: saved rows go to update-report (which also carries the report
+   * name, so renaming happens there), new rows to rows/add and removed rows to rows/delete.
    */
   update(id: string, draft: LeasingReportDraft): Observable<LeasingReportDetail> {
     return forkJoin([this.get(id), this.loadDirectory()]).pipe(
       switchMap(([current, dir]) => {
-        if (draft.name !== current.name) {
-          return throwError(() => new Error('Renaming a report is not supported by the server yet.'));
-        }
         const reportId = numericId(id);
         const kept = new Set(draft.rows.flatMap((row) => (row.id === undefined ? [] : [row.id])));
         const existing = draft.rows.filter((row) => row.id !== undefined);
+        if (draft.name !== current.name && !existing.length) {
+          return throwError(() => new Error('Keep at least one saved row to rename the report.'));
+        }
         const added = draft.rows.filter((row) => row.id === undefined);
         const removed = current.rows.filter((row) => row.id !== undefined && !kept.has(row.id));
 
         const requests: Observable<unknown>[] = [
           ...(existing.length
-            ? [this.http.post(`${this.base}/reports/update-report`, existing.map((row) => ({ ...this.rowBody(row, dir), id: row.id })))]
+            ? [this.http.post(`${this.base}/reports/update-report`, existing.map((row) => ({ ...this.rowBody(row, dir), id: row.id, reportName: draft.name })))]
             : []),
           ...added.map((row) =>
             this.http.post(`${this.base}/reports/${reportId}/rows/add`, { ...this.rowBody(row, dir), tinNo: row.tin ?? '' }),
@@ -185,23 +179,19 @@ export class HttpLeasingApi extends LeasingApi {
     );
   }
 
-  /** Not offered in the UI: the API only deletes rows (see update), not whole reports. */
-  delete(): Observable<void> {
-    return throwError(() => new Error('Deleting whole reports is not supported by the server.'));
+  delete(id: string): Observable<void> {
+    return this.http.post<void>(`${this.base}/reports/delete/${numericId(id)}`, null).pipe(
+      map(() => undefined),
+      catchError((error) => throwError(() => apiError(error))),
+    );
   }
 
-  /** One Excel file per report (the server builds them); every report when `ids` is empty. */
+  /** One zip with an Excel file per report (built by the server); every report when `ids` is empty. */
   export(ids: readonly string[]): Observable<DownloadedFile[]> {
     const ids$ = ids.length ? of([...ids]) : this.summaries().pipe(map((all) => all.map((r) => r.id)));
     return ids$.pipe(
       switchMap((list) =>
-        forkJoin(
-          list.map((id) =>
-            this.http
-              .get(`${this.base}/report/${numericId(id)}/download-lease-report`, { observe: 'response', responseType: 'blob' })
-              .pipe(map((response) => ({ blob: response.body!, fileName: fileNameFrom(response, `${id}.xlsx`) }))),
-          ),
-        ),
+        downloadReports(this.http, `${this.base}/reports/download`, list.map(numericId), 'leasing_reports.zip'),
       ),
       catchError((error) => throwError(() => apiError(error))),
     );
@@ -212,12 +202,12 @@ export class HttpLeasingApi extends LeasingApi {
   }
 
   private summaries(): Observable<ReportSummary[]> {
-    this.summaries$ ??= this.http.get<{ data: ReportListDto[] }>(`${this.base}/reports/get-all-reports`, { params: { ...ALL } }).pipe(
-      map(({ data }) =>
+    this.summaries$ ??= getAllPages<ReportListDto>(this.http, `${this.base}/reports/get-all-reports`).pipe(
+      map((data) =>
         data.map((dto) => ({
           id: dto.reportId,
           name: dto.reportName,
-          amount: dto.expectedCashRevenue,
+          amount: dto.totalExpenses ?? dto.expectedCashRevenue ?? 0,
           createdAt: utcIso(dto.dateTimeCreated),
           updatedAt: utcIso(dto.lastDateUpdated),
         })),

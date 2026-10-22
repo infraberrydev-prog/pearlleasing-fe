@@ -5,11 +5,12 @@ import { firstValueFrom } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config';
 import { DEFAULT_QUERY } from '../../reports/models/report';
 import { LeaseRow } from '../models/leasing-report';
-import { HttpLeasingApi, numericId } from './http-leasing-api';
+import { numericId } from '../../../shared/utils/api';
+import { HttpLeasingApi } from './http-leasing-api';
 
 const LIST = {
   data: [
-    { id: 4, reportId: 'RP00004', reportName: 'March', expectedCashRevenue: 9500, dateTimeCreated: '2026-10-18T14:29:13.61', lastDateUpdated: null },
+    { id: 4, reportId: 'RP00004', reportName: 'March', totalExpenses: 9500, dateTimeCreated: '2026-10-18T14:29:13.61', lastDateUpdated: null },
     { id: 3, reportId: 'RP00003', reportName: 'February', expectedCashRevenue: 100, dateTimeCreated: '2026-10-17T14:29:13', lastDateUpdated: '2026-10-19T01:00:00' },
   ],
   totalRecords: 2,
@@ -75,7 +76,7 @@ describe('HttpLeasingApi', () => {
     const { api, http } = setup();
     const page = firstValueFrom(api.list({ ...DEFAULT_QUERY, search: 'feb' }));
     const req = http.expectOne((r) => r.url === '/api/reports/get-all-reports');
-    expect(req.request.params.get('pageSize')).toBe('1000');
+    expect(req.request.params.get('pageSize')).toBe('100');
     req.flush(LIST);
 
     expect(await page).toEqual({
@@ -146,6 +147,20 @@ describe('HttpLeasingApi', () => {
     expect((await saved).id).toBe('RP00004');
   });
 
+  it('renames the report through the row update', async () => {
+    const { api, http } = setup();
+    const row: LeaseRow = { id: 7, buildingType: 'Building - A', vendor: 'Dry Section', stall: 'A-1', lesseeName: 'John Santos', mobileNumber: null, tin: null, monthlyRental: 2500, paymentStatus: 'unpaid', paymentMethod: 'Gcash', referenceNumber: 'RF1', electricity: 500, water: 200, otherUtilities: 300, cusaFee: null, pylonRental: null, penalty: null };
+    const saved = firstValueFrom(api.update('RP00004', { name: 'April', rows: [row] }));
+    http.expectOne(detailsUrl(4)).flush(DETAILS);
+    flushDirectory(http);
+
+    const update = http.expectOne('/api/reports/update-report');
+    expect(update.request.body).toEqual([expect.objectContaining({ id: 7, reportName: 'April' })]);
+    update.flush({ message: 'ok' });
+    http.expectOne(detailsUrl(4)).flush({ ...DETAILS, reportName: 'April' });
+    expect((await saved).name).toBe('April');
+  });
+
   it('refuses a building that is not in the master data', async () => {
     const { api, http } = setup();
     const row = { buildingType: 'Nowhere', vendor: 'x', stall: 'A-1', lesseeName: 'x', mobileNumber: null, tin: null, monthlyRental: 1, paymentStatus: 'paid', paymentMethod: 'Cash', referenceNumber: 'r', electricity: 0, water: 0, otherUtilities: 0, cusaFee: null, pylonRental: null, penalty: null } as const;
@@ -154,12 +169,37 @@ describe('HttpLeasingApi', () => {
     await expect(created).rejects.toThrow('Unknown building "Nowhere"');
   });
 
-  it('downloads each report as the Excel file the server names', async () => {
+  it('reads the amount from either field name the server has used', async () => {
     const { api, http } = setup();
-    const files = firstValueFrom(api.export(['RP00004']));
-    http
-      .expectOne('/api/report/4/download-lease-report')
-      .flush(new Blob(['x']), { headers: new HttpHeaders({ 'Content-Disposition': "attachment; filename=a.xlsx; filename*=UTF-8''RP00004_March.xlsx" }) });
-    expect((await files).map((f) => f.fileName)).toEqual(['RP00004_March.xlsx']);
+    const page = firstValueFrom(api.list(DEFAULT_QUERY));
+    http.expectOne((r) => r.url === '/api/reports/get-all-reports').flush(LIST);
+    // RP00004 sends totalExpenses, RP00003 the older expectedCashRevenue.
+    expect((await page).items.map((r) => r.amount)).toEqual([9500, 100]);
+  });
+
+  it('loads every page when there are more than 100 reports', async () => {
+    const { api, http } = setup();
+    const page = firstValueFrom(api.list(DEFAULT_QUERY));
+    const url = (r: { url: string }) => r.url === '/api/reports/get-all-reports';
+    http.expectOne((r) => url(r) && r.params.get('page') === '1').flush({ ...LIST, totalPages: 2 });
+    http.expectOne((r) => url(r) && r.params.get('page') === '2').flush({ ...LIST, data: [{ ...LIST.data[0], reportId: 'RP00099' }] });
+    expect((await page).grandTotal).toBe(3);
+  });
+
+  it('deletes a report by its numeric id', async () => {
+    const { api, http } = setup();
+    const deleted = firstValueFrom(api.delete('RP00004'));
+    http.expectOne('/api/reports/delete/4').flush({ message: 'ok' });
+    await expect(deleted).resolves.toBeUndefined();
+  });
+
+  it('downloads the selected reports as one zip', async () => {
+    const { api, http } = setup();
+    const files = firstValueFrom(api.export(['RP00004', 'RP00003']));
+    const req = http.expectOne('/api/reports/download');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ reportIds: [4, 3] });
+    req.flush(new Blob(['x']), { headers: new HttpHeaders({ 'Content-Disposition': "attachment; filename=leasing_reports.zip; filename*=UTF-8''leasing_reports.zip" }) });
+    expect((await files).map((f) => f.fileName)).toEqual(['leasing_reports.zip']);
   });
 });

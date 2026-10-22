@@ -8,7 +8,8 @@ import { ExpenseReportDetail, ExpenseReportDraft, expenseTotal } from '../models
 
 /** Backend contract for expenses reports. `Mock*` is the in-memory version used by tests and `useMocks`. */
 export abstract class ExpensesApi {
-  abstract list(query: ReportQuery): Observable<ReportPage>;
+  /** `refresh`: reload from the server instead of reusing the last list (search, sort and paging don't). */
+  abstract list(query: ReportQuery, refresh?: boolean): Observable<ReportPage>;
   abstract get(id: string): Observable<ExpenseReportDetail>;
   abstract create(draft: ExpenseReportDraft): Observable<ExpenseReportDetail>;
   abstract update(id: string, draft: ExpenseReportDraft): Observable<ExpenseReportDetail>;

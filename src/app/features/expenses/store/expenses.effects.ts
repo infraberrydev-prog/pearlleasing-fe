@@ -14,8 +14,9 @@ export const load$ = createEffect(
   (actions$ = inject(Actions), api = inject(ExpensesApi), store = inject(Store)) =>
     actions$.pipe(
       ofType(expensesListActions.opened, expensesListActions.queryChanged, expensesApiActions.deleted),
-      switchMap(() =>
-        api.list(store.selectSignal(expensesFeature.selectQuery)()).pipe(
+      // Search, sort, filter and paging reuse the loaded list; opening the page or deleting reloads it.
+      switchMap(({ type }) =>
+        api.list(store.selectSignal(expensesFeature.selectQuery)(), type !== expensesListActions.queryChanged.type).pipe(
           map((page) => expensesApiActions.loaded({ page })),
           catchError((error) => of(expensesApiActions.loadFailed({ error: message(error) }))),
         ),
